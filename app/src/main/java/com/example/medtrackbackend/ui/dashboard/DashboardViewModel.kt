@@ -24,6 +24,7 @@ class DashboardViewModel(
     init {
 //        getIntakeTimesToday()
         getAllMedicine()
+        getAllPrograms()
     }
 
     private fun getAllMedicine(){
@@ -31,6 +32,16 @@ class DashboardViewModel(
             repository.allMedicine.collectLatest {
                 state = state.copy(
                     medicine = it
+                )
+            }
+        }
+    }
+
+    private fun getAllPrograms(){
+        viewModelScope.launch {
+            repository.allPrograms.collectLatest {
+                state = state.copy(
+                    programs = it
                 )
             }
         }
@@ -44,6 +55,25 @@ class DashboardViewModel(
                     quantity = qty,
                     dosage = dosage,
                     isActive = true
+                )
+            )
+        }
+    }
+
+    fun insertProgram(medicineId: Int,
+                      programName:String,
+                      startDate:Date,
+                      weeks: Int,
+                      numPills: Int,
+                      interval: Int){
+        viewModelScope.launch {
+            repository.insertProgram(
+                IntakeProgram(
+                    medIdFk = medicineId,
+                    programName=programName,
+                    startDate =startDate,
+                    weeks= weeks,
+                    numPills= numPills,
                 )
             )
         }
@@ -86,5 +116,6 @@ data class DashboardState(
     val medicine: List<Medicine> = emptyList(),
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
-    val intakeTimeChecked : Boolean = false
+    val intakeTimeChecked : Boolean = false,
+    val programs: List<IntakeProgram> = emptyList()
 )

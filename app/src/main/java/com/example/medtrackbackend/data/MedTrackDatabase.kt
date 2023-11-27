@@ -15,7 +15,7 @@ import com.example.medtrackbackend.data.MedicineDao
 import com.example.medtrackbackend.data.ProgramDao
 import com.example.medtrackbackend.data.TimeDao
 
-@TypeConverters(value = [DateConverter::class])
+@TypeConverters(value = [DateConverter::class, TimeConverter::class])
 @Database(
     entities = [Medicine::class, IntakeProgram::class, IntakeTime::class],
     version = 1,

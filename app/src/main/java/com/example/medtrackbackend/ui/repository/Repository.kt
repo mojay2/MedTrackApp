@@ -17,8 +17,12 @@ class Repository(
 ) {
     val allMedicine: Flow<List<Medicine>> = medicineDao.getAllMedicine()
     val allPrograms: Flow<List<IntakeProgram>> = intakeProgramDao.getAllPrograms()
-    val allTimes: Flow<List<IntakeTime>> = intakeTimeDao.getAllTimes()
+//    val allTimes: Flow<List<IntakeTime>> = intakeTimeDao.getAllTimes()
 
+
+    fun getAllTimes():Flow<List<IntakeTime>>{
+        return intakeTimeDao.getAllTimes()
+    }
 
     suspend fun insertMedicine(medicine: Medicine) {
         medicineDao.insert(medicine)

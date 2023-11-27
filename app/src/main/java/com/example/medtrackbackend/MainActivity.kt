@@ -3,9 +3,6 @@ package com.example.medtrackbackend
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,29 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.medtrackbackend.ui.dashboard.DashboardScreen
 import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineScreen
 import com.example.medtrackbackend.ui.screens.add_edit_program.AddEditProgramScreen
 import com.example.medtrackbackend.ui.screens.medicine_cabinet.MedicineCabinetScreen
 import com.example.medtrackbackend.ui.screens.medicine_details.MedicineDetailsScreen
 import com.example.medtrackbackend.ui.theme.MedTrackBackendTheme
-
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            MedTrackBackendTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    DashboardScreen()
-//                }
-//            }
-//        }
-//    }
-//}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

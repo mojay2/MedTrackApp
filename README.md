@@ -7,7 +7,7 @@
 - [x] Navigation
 - [x] Create medicine & program records 
 - [x] Read medicine & program records
-- [ ] Update all records
-- [ ] Delete all records
-- [ ] Add Time Entries
-- [ ] Home page functionality
+- [ ] Update func. for all records
+- [ ] Delete func. for all records
+- [ ] Add Time Entries on program create
+- [ ] Entire Home page functionality

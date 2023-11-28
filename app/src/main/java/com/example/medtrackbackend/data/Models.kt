@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.sql.Time
+import java.time.LocalTime
 import java.util.Date
 
 @Entity(tableName = "medicine")
@@ -54,7 +55,7 @@ data class IntakeTime(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val programIdFk: Int, // Foreign key reference to Program table
-    val time: String,
+    val time: LocalTime,
     val intakeDate: Date,
     val status: Status
 )

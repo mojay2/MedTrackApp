@@ -121,6 +121,7 @@ fun DateContainer() {
                         state.selectedDateMillis?.let { selectedDateMillis ->
                             val selectedDate = LocalDate.ofEpochDay(selectedDateMillis / 86400000)
                             currentDate = selectedDate
+                            activeDate = selectedDate
                         }
                     }
                 ) {

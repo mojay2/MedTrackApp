@@ -1,140 +1,89 @@
 package com.example.medtrack.ui.screens.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.medtrack.R
-import com.example.medtrack.ui.util.UiEvent
+import com.example.medtrack.ui.composables.BottomNavBar
+import com.example.medtrack.ui.composables.HeaderPage
+import com.example.medtrack.ui.composables.MedicationList
+import com.example.medtrack.ui.theme.MedTrackTheme
+import com.example.medtrack.ui.util.Routes
 
 @Composable
 fun HomeScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    navController: NavHostController
 ) {
-    val painter: Painter = painterResource(R.drawable.home)
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(navController)
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                text = { Text(text = "Completed Dosage") },
+                icon = { Icon(Icons.Filled.Check, "Check Icon") },
+                onClick = { /*TODO*/ }
+            )
+        }
+    ) { innerPadding ->
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceVariant,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(0.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(innerPadding)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Hello there,",
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Here are your meds for the day.",
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
             Column() {
-                Image(
-                    painter = painter,
-                    contentDescription = "Home Art",
+                Box(
                     modifier = Modifier
-                        .size(300.dp)
-                )
-
-            }
-        }
-    }
-}
-
-@Composable
-fun MedicationSchedule() {
-    val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
-    val medicationsToTake = listOf(
-        Medication("Paracetamol", "6:00 am", "1 pill"),
-        Medication("Paracetamol", "12:00 pm", "1 pill"),
-        Medication("Paracetamol", "8:00 pm", "1 pill")
-    )
-    val completedMedications = listOf(
-        Medication("Paracetamol", "6:00 am", "1 pill"),
-        Medication("Paracetamol", "12:00 pm", "1 pill"),
-        Medication("Paracetamol", "6:00 am", "1 pill")
-    )
-
-    LazyColumn {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                for (day in daysOfWeek) {
-                    Text(text = day)
+                        .padding(0.dp)
+                ) {
+                    HeaderPage(paint = R.drawable.home)
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(top = 56.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    MedicationList()
                 }
             }
         }
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            medicationsToTake.forEach {
-                MedicationItem(it)
-            }
-        }
-        item {
-            Text(text = "Completed")
-        }
-        item {
-            completedMedications.forEach {
-                MedicationItem(it)
-            }
-        }
     }
 }
-
-@Composable
-fun MedicationItem(medication: Medication) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = medication.name)
-        Text(text = "${medication.time} - ${medication.dosage}")
-    }
-}
-
-data class Medication(val name: String, val time: String, val dosage: String)
 
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(onNavigate = {})
+    MedTrackTheme {
+        val navController = rememberNavController()
+        NavHost(
+            navController = navController,
+            startDestination = Routes.HOME
+        ) {
+            composable(Routes.HOME) {
+                HomeScreen(
+                    navController = navController
+                )
+            }
+        }
+    }
 }

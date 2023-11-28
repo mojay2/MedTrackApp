@@ -24,9 +24,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(Routes.HOME) {
                         HomeScreen(
-                            onNavigate = {
-                                navController.navigate(it.route)
-                            }
+                            navController = navController
                         )
                     }
                 }

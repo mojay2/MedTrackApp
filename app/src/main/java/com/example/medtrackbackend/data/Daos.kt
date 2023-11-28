@@ -44,6 +44,13 @@ interface ProgramDao {
     @Query("SELECT * FROM intake_program WHERE program_id =:programId")
     fun getProgram(programId: Int): Flow<IntakeProgram>
 
+    @Query("""
+        SELECT * FROM intake_program
+        ORDER BY program_id DESC
+        LIMIT 1;
+    """)
+    fun getLatestProgram():Flow<IntakeProgram>
+
     @Query("SELECT * FROM intake_program")
     fun getAllPrograms(): Flow<List<IntakeProgram>>
 

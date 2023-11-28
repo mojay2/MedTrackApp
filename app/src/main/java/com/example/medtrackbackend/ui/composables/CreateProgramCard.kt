@@ -1,6 +1,8 @@
 package com.example.medtrackbackend.ui.composables
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,10 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.example.medtrackbackend.data.Medicine
 import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateProgramCard(
@@ -46,8 +51,12 @@ fun CreateProgramCard(
         startDate: Date,
         weeks: Int,
         numPills: Int,
-        interval: Int,
-        time: String
+        time: LocalTime
+    ) -> Unit,
+    onAddTime: (
+        time: LocalTime,
+        startDate: Date,
+        weeks: Int,
     ) -> Unit,
 ) {
     Log.d("Testing Tag", "Medicine ID Here in add program card: ${medicine.id}")
@@ -66,9 +75,8 @@ fun CreateProgramCard(
             var startDate by rememberSaveable { mutableStateOf(Calendar.getInstance().time) }
             var weeks by rememberSaveable { mutableStateOf("") }
             var numPills by rememberSaveable { mutableStateOf("") }
-            var interval by rememberSaveable { mutableStateOf("") }
             var intakeTime by rememberSaveable {
-                mutableStateOf("")
+                mutableStateOf(LocalTime.now())
             }
 
             TextField(
@@ -101,12 +109,13 @@ fun CreateProgramCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = "Selected Time: $intakeTime")
+//                Text(text = "Selected Time: ${intakeTime}")
+                Text(text = "Selected Time: ${intakeTime.format(DateTimeFormatter.ofPattern("HH:mm"))}")
                 Spacer(modifier = Modifier.size(16.dp))
                 val  timePickerDialog = ShowTimePicker(
                     context = LocalContext.current,
-                    onTimeSelected = { time ->
-                        intakeTime = time
+                    onTimeSelected = {
+                        intakeTime = it
                     }
                 )
                 IconButton(onClick = { timePickerDialog.show() }) {
@@ -141,37 +150,23 @@ fun CreateProgramCard(
                 )
             )
 
-            TextField(
-                value = interval,
-                onValueChange = {
-                    // Ensure the input is a number
-                    if (it.isDigitsOnly()) {
-                        interval = it
-                    }
-                },
-                label = { Text("Interval") },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                )
-            )
-
             Button(
                 onClick = {
-
                     //Validation
                     if (programName.isNotBlank() &&
-                        weeks.isNotBlank() && numPills.isNotBlank() && interval.isNotBlank())
+                        weeks.isNotBlank() && numPills.isNotBlank())
                     {
                         onAddProgram(medicineId.toInt(), programName, startDate,
-                            weeks.toInt(), numPills.toInt(), interval.toInt(), intakeTime
+                            weeks.toInt(), numPills.toInt(), intakeTime
                         )
+
+                        onAddTime(intakeTime, startDate, weeks.toInt())
 
                         programName = ""
                         weeks = ""
                         numPills = ""
-                        interval = ""
                         startDate = Calendar.getInstance().time
-                        intakeTime = ""
+                        intakeTime = LocalTime.now()
                     }
                 },
                 modifier = Modifier.padding(top = 16.dp),

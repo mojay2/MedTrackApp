@@ -1,11 +1,12 @@
-package com.example.medtrack.ui.screens.home
+package com.example.medtrack.ui.screens.medicine_cabinet
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,32 +27,37 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medtrack.data.model.Medication
 import com.example.medtrack.ui.composables.BottomNavBar
-import com.example.medtrack.ui.composables.ConfirmModal
-import com.example.medtrack.ui.composables.HomeHeader
+import com.example.medtrack.ui.composables.CabinetHeader
 import com.example.medtrack.ui.composables.MedicationList
 import com.example.medtrack.ui.theme.MedTrackTheme
 import com.example.medtrack.ui.util.LocalCustomColorsPalette
 import com.example.medtrack.ui.util.Routes
 
 @Composable
-fun HomeScreen(
+fun MedicineCabinetScreen(
     navController: NavHostController
 ) {
     var activeMedicine by remember { mutableStateOf<Medication?>(null) }
-    val openConfirmDialog = remember { mutableStateOf(false) }
-
     Scaffold(
         bottomBar = {
             BottomNavBar(navController)
         },
         floatingActionButton = {
-            if (activeMedicine != null) {
+            if (activeMedicine == null) {
                 ExtendedFloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
-                    text = { Text(text = "Completed Dosage") },
-                    icon = { Icon(Icons.Filled.Check, "Check Icon") },
-                    onClick = { openConfirmDialog.value = true }
+                    text = { Text(text = "Add Medicine") },
+                    icon = { Icon(Icons.Filled.Add, "Add Icon") },
+                    onClick = { }
+                )
+            } else {
+                ExtendedFloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    text = { Text(text = "View Medicine") },
+                    icon = { Icon(Icons.Outlined.StickyNote2, "Note Icon") },
+                    onClick = { }
                 )
             }
         }
@@ -67,53 +73,36 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    HomeHeader()
+                    CabinetHeader()
                 }
                 Column(
                     modifier = Modifier
-                        .padding(top = 56.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 96.dp, start = 16.dp, end = 16.dp)
                 ) {
                     MedicationList(
                         activeMedicine,
                         onActiveMedicineChange = { newActiveMedicine ->
                             activeMedicine = newActiveMedicine
-                        })
+                        },
+                        isCabinet = true
+                    )
                 }
             }
-        }
-
-        if (openConfirmDialog.value) {
-            ConfirmModal(
-                onDismissRequest = { openConfirmDialog.value = false },
-                onConfirmation = { openConfirmDialog.value = false },
-                dialogTitle = "Confirm Dosage",
-                dialogContent = {
-                    Text(
-                        text = "Medicine: ${activeMedicine?.medicineName}\n" +
-                                "Dosage: 1 pill\n" +
-                                "Time: 6:00 am",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                icon = Icons.Filled.Check
-            )
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+fun MedicineCabinetScreenPreview() {
     MedTrackTheme {
         val navController = rememberNavController()
         NavHost(
             navController = navController,
-            startDestination = Routes.HOME
+            startDestination = Routes.CABINET
         ) {
-            composable(Routes.HOME) {
-                HomeScreen(
+            composable(Routes.CABINET) {
+                MedicineCabinetScreen(
                     navController = navController
                 )
             }

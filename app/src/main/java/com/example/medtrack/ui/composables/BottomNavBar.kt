@@ -20,6 +20,13 @@ import com.example.medtrack.ui.util.Routes
 
 @Composable
 fun BottomNavBar(navController: NavHostController) {
+    val cabinetRoutes = setOf(
+        Routes.CABINET,
+        Routes.MEDICINE_DETAILS,
+        Routes.ADD_EDIT_MEDICINE_DETAILS,
+        Routes.ADD_EDIT_PROGRAM
+    )
+
     val currentRoute =
         navController.currentBackStackEntry?.destination?.route
 
@@ -30,7 +37,7 @@ fun BottomNavBar(navController: NavHostController) {
             MaterialTheme.colorScheme.secondary
 
     val cabinetIconTint =
-        if (currentRoute == Routes.CABINET)
+        if (currentRoute in cabinetRoutes)
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.secondary

@@ -41,6 +41,7 @@ import com.example.medtrack.ui.composables.InfoCard
 import com.example.medtrack.ui.composables.ProgramList
 import com.example.medtrack.ui.theme.MedTrackTheme
 import com.example.medtrack.ui.util.LocalCustomColorsPalette
+import com.example.medtrack.ui.util.PageHeaderData
 import com.example.medtrack.ui.util.Routes
 
 @Composable
@@ -108,7 +109,10 @@ fun MedicineDetailsScreen(
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    DetailsHeader(medicine)
+                    DetailsHeader(
+                        medication = medicine,
+                        pageHeader = PageHeaderData.MEDICINE_DETAILS,
+                    )
                 }
                 Column(
                     modifier = Modifier

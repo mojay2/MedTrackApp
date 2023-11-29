@@ -23,13 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.medtrack.R
 import com.example.medtrack.data.model.Medication
+import com.example.medtrack.ui.util.PageHeaderData
 
 @Composable
 fun DetailsHeader(
-    medication: Medication
+    medication: Medication? = null,
+    pageHeader: PageHeaderData,
+    hideMedicineName: Boolean = false
 ) {
+    val iconModifier = Modifier
+        .height(80.dp)
+        .width(80.dp)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -49,8 +55,8 @@ fun DetailsHeader(
                 contentDescription = "Arrow Back Icon"
             )
             HeaderText(
-                titleText = "Medicine Details",
-                subtitleText = "here is a detailed look of your medicine."
+                titleText = pageHeader.title,
+                subtitleText = pageHeader.subtitle
             )
             Spacer(modifier = Modifier.width(24.dp))
         }
@@ -64,25 +70,33 @@ fun DetailsHeader(
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
                     .padding(8.dp)
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.capsule),
-                    contentDescription = "Capsule Icon",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .height(80.dp)
-                        .width(80.dp)
-                )
+                if (pageHeader.iconImage != null) {
+                    Icon(
+                        imageVector = pageHeader.iconImage,
+                        contentDescription = "Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = iconModifier
+                    )
+                } else if (pageHeader.iconPainter != null) {
+                    Icon(
+                        painter = painterResource(pageHeader.iconPainter),
+                        contentDescription = "Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = iconModifier
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = medication.medicineName,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            MedicineTag(medication = medication, size = TagSize.LARGE)
+            if (!hideMedicineName && medication != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = medication.medicineName,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                MedicineTag(medication = medication, size = TagSize.LARGE)
+            }
         }
-
     }
 }

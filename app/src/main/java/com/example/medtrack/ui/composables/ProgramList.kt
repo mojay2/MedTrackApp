@@ -3,7 +3,10 @@ package com.example.medtrack.ui.composables
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,7 +25,12 @@ fun ProgramList(
         // TODO: Add logic for conditional rendering
         if (true) {
             item {
-                SectionTitle(text = "Active Program")
+                Text(
+                    text = "Active Program",
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
                 programs.take(1).forEach { program ->
                     val isActiveProgram = program.id == activeProgram?.id
                     val activeProgramChange = if (isActiveProgram) null else program
@@ -39,7 +47,12 @@ fun ProgramList(
         }
         if (true) {
             item {
-                SectionTitle(text = "Inactive Programs")
+                Text(
+                    text = "Inactive Programs",
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
                 programs.subList(1, programs.size).forEach { program ->
                     val isActiveProgram = program.id == activeProgram?.id
                     val activeProgramChange = if (isActiveProgram) null else program

@@ -2,9 +2,11 @@ package com.example.medtrack.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.medtrack.R
 import com.example.medtrack.data.model.Medication
@@ -36,7 +38,13 @@ fun MedicationItem(
 
     InfoCardExtended(
         infoTopLeft = {
-            TitleText(medication.medicineName)
+            Text(
+                text = medication.medicineName,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+            )
             if (isComplete && !isCabinet)
                 Image(
                     painter = painterResource(R.drawable.circle_check),

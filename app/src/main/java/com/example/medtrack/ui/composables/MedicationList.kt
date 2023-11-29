@@ -3,7 +3,10 @@ package com.example.medtrack.ui.composables
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,7 +30,12 @@ fun MedicationList(
     ) {
         item {
             if (!isCabinet) {
-                SectionTitle(text = "To Take")
+                Text(
+                    text = "To Take",
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
             medications.filter { it.isActive }.forEach { medication ->
                 MedicationItem(
@@ -42,7 +50,12 @@ fun MedicationList(
         }
         item {
             if (!isCabinet) {
-                SectionTitle(text = "Completed")
+                Text(
+                    text = "Completed",
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
             }
             medications.filter { !it.isActive }.forEach { medication ->
                 MedicationItem(

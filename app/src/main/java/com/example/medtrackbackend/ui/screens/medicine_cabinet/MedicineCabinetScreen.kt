@@ -58,6 +58,11 @@ fun MedicineCabinetScreen(
         LazyColumn(
             contentPadding = PaddingValues(bottom = 56.dp), // Adjust this value based on your design
         ) {
+            if(medicineCabinetState.medicine.isEmpty()){
+                item{
+                    Text("No Medicine Saved in Cabinet")
+                }
+            }
             items(medicineCabinetState.medicine) { medicine ->
                 MedicineCard(medicine = medicine, navController = navController)
             }

@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             MedTrackBackendTheme {
                 // A surface container using the 'background' color from the theme
-                NavHost(navController = navController, startDestination = "MedicineCabinet") {
+                NavHost(navController = navController, startDestination = "Home") {
                     composable("MedicineCabinet") { MedicineCabinetScreen(navController) }
                     composable("Home") { HomeScreen(navController) }
                     composable("AddEditMedicine") { AddEditMedicineScreen(navController) }

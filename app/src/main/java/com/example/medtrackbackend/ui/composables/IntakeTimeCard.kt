@@ -45,7 +45,6 @@ fun IntakeTimeCard(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = item.intakeTime.id.toString())
             Text(text = item.medicine.medicineName)
             Text(text = item.intakeProgram.programName)
             Text(text = "${item.intakeProgram.numPills} pills")

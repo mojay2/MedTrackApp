@@ -8,7 +8,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,6 +22,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,18 +74,26 @@ fun HomeScreen(
             }
         }
     ) {
-        LazyColumn(
-            contentPadding = PaddingValues(bottom = 56.dp), // Adjust this value based on your design
-        ) {
-            if(homeState.intakeTimes.isEmpty()){
-                item{
-                    Text("EMPTY")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ){
+            Text("Hello There, Here are your medicine for today")
+            Spacer(modifier = Modifier.size(16.dp))
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = 56.dp), // Adjust this value based on your design
+            ) {
+                if(homeState.intakeTimes.isEmpty()){
+                    item{
+                        Text("No Medicine to take today")
+                    }
+                }
+                items(homeState.intakeTimes) { intakeTime ->
+                    IntakeTimeCard(item = intakeTime, homeViewModel = homeViewModel, navController = navController)
                 }
             }
-            items(homeState.intakeTimes) { intakeTime ->
-//                IntakeTimeCard(item = intakeTime)
-                IntakeTimeCard(item = intakeTime, homeViewModel = homeViewModel, navController = navController)
-            }
         }
+
     }
 }

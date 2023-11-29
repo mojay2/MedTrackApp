@@ -1,6 +1,5 @@
 package com.example.medtrack.ui.screens.add_edit_medicine
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +34,8 @@ import com.example.medtrack.data.util.sampleMedicationList
 import com.example.medtrack.ui.composables.AddEditMedicineForm
 import com.example.medtrack.ui.composables.BottomNavBar
 import com.example.medtrack.ui.composables.ConfirmModal
-import com.example.medtrack.ui.composables.DetailsHeader
+import com.example.medtrack.ui.composables.FormDetailsHeader
+import com.example.medtrack.ui.composables.MedicineDetailsHeader
 import com.example.medtrack.ui.theme.MedTrackTheme
 import com.example.medtrack.ui.util.LocalCustomColorsPalette
 import com.example.medtrack.ui.util.PageHeaderData
@@ -57,24 +57,7 @@ fun AddEditMedicineScreen(
             BottomNavBar(navController)
         },
         floatingActionButton = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(start = 32.dp)
-                    .fillMaxWidth()
-            ) {
-                ExtendedFloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    text = { Text(text = submitButtonText) },
-                    icon = { Icon(Icons.Outlined.Check, "Check Icon") },
-                    onClick = { },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                )
-            }
+            AddEditMedicineFloatingActionButton(submitButtonText)
         }
     ) { innerPadding ->
         Surface(
@@ -88,7 +71,7 @@ fun AddEditMedicineScreen(
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    DetailsHeader(
+                    MedicineDetailsHeader(
                         medication = medicine,
                         pageHeader = pageHeader,
                         hideMedicineName = true
@@ -96,7 +79,7 @@ fun AddEditMedicineScreen(
                 }
                 Column(
                     modifier = Modifier
-                        .padding(top = 80.dp, start = 16.dp, end = 16.dp, bottom = 112.dp)
+                        .padding(top = 80.dp, start = 16.dp, end = 16.dp, bottom = 72.dp)
                         .fillMaxWidth()
                 ) {
                     Row(
@@ -106,20 +89,12 @@ fun AddEditMedicineScreen(
                             .fillMaxWidth()
                     )
                     {
-                        Text(
-                            text = "Medicine Details",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
+                        FormDetailsHeader(
+                            medicine = medicine,
+                            openDeleteDialog = openDeleteDialog,
+                            headerText = "Medicine Details",
+                            sideText = "Delete Medicine"
                         )
-                        if (medicine != null) {
-                            Text(
-                                text = "Delete Medicine",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier
-                                    .clickable { openDeleteDialog.value = true }
-                            )
-                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditMedicineForm(
@@ -147,6 +122,28 @@ fun AddEditMedicineScreen(
                 icon = Icons.Filled.Check
             )
         }
+    }
+}
+
+@Composable
+fun AddEditMedicineFloatingActionButton(submitButtonText: String) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(start = 32.dp)
+            .fillMaxWidth()
+    ) {
+        ExtendedFloatingActionButton(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            text = { Text(text = submitButtonText) },
+            icon = { Icon(Icons.Outlined.Check, "Check Icon") },
+            onClick = { },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
     }
 }
 

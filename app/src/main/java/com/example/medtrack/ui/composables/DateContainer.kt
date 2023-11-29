@@ -1,6 +1,8 @@
 package com.example.medtrack.ui.composables
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,89 +62,99 @@ fun DateContainer() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-            modifier = Modifier
-                .clickable(onClick = { openDialog.value = true })
-        ) {
-            Text(
-                text = currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Icon(
-                Icons.Filled.ArrowDropDown,
-                contentDescription = "Arrow Down",
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            dateRange.take(3).forEach { date ->
-                DateItem(
-                    day = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                    date = date.dayOfMonth.toString(),
-                    modifier = Modifier.weight(1f),
-                    isActive = activeDate == date,
-                    onClick = { activeDate = date }
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            dateRange.takeLast(3).forEach { date ->
-                DateItem(
-                    day = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                    date = date.dayOfMonth.toString(),
-                    modifier = Modifier.weight(1f),
-                    isActive = activeDate == date,
-                    onClick = { activeDate = date }
-                )
-            }
-        }
-
+        DateSelectionHeader(currentDate, openDialog)
+        DateRows(dateRange.take(3), activeDate) { activeDate = it }
+        DateRows(dateRange.takeLast(3), activeDate) { activeDate = it }
     }
 
     if (openDialog.value) {
-        DatePickerDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        openDialog.value = false
-                        state.selectedDateMillis?.let { selectedDateMillis ->
-                            val selectedDate = LocalDate.ofEpochDay(selectedDateMillis / 86400000)
-                            currentDate = selectedDate
-                            activeDate = selectedDate
-                        }
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog.value = false
-                    }
-                ) {
-                    Text("CANCEL")
-                }
+        DateDialog(
+            openDialog = openDialog,
+            state = state,
+            onDateSelected = { selectedDate ->
+                currentDate = selectedDate
+                activeDate = selectedDate
             }
-        ) {
-            DatePicker(
-                state = state,
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun DateSelectionHeader(currentDate: LocalDate, openDialog: MutableState<Boolean>) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        modifier = Modifier.clickable { openDialog.value = true }
+    ) {
+        Text(
+            text = currentDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        Icon(
+            Icons.Filled.ArrowDropDown,
+            contentDescription = "Arrow Down",
+            tint = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.size(16.dp)
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun DateRows(
+    dates: List<LocalDate>,
+    activeDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        dates.forEach { date ->
+            DateItem(
+                day = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                date = date.dayOfMonth.toString(),
+                modifier = Modifier.weight(1f),
+                isActive = activeDate == date,
+                onClick = { onDateSelected(date) }
             )
         }
+    }
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateDialog(
+    openDialog: MutableState<Boolean>,
+    state: DatePickerState,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    DatePickerDialog(
+        onDismissRequest = { openDialog.value = false },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    openDialog.value = false
+                    state.selectedDateMillis?.let { selectedDateMillis ->
+                        val selectedDate = LocalDate.ofEpochDay(selectedDateMillis / 86400000)
+                        onDateSelected(selectedDate)
+                    }
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { openDialog.value = false }) {
+                Text("CANCEL")
+            }
+        }
+    ) {
+        DatePicker(state = state)
     }
 }

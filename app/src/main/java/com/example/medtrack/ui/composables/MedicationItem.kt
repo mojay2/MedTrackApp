@@ -1,10 +1,13 @@
 package com.example.medtrack.ui.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,37 +22,45 @@ fun MedicationItem(
     isCabinet: Boolean = false,
     onClick: () -> Unit
 ) {
-    val containerColor =
-        if (isComplete && !isCabinet) MaterialTheme.colorScheme.surfaceColorAtElevation(
+    val containerColor = when {
+        isComplete && !isCabinet -> MaterialTheme.colorScheme.surfaceColorAtElevation(
             elevation = 5.dp
         )
-        else if (isActive) MaterialTheme.colorScheme.secondaryContainer
-        else MaterialTheme.colorScheme.surface
 
-    val capsuleColor =
-        if (isComplete && !isCabinet) MaterialTheme.colorScheme.secondary
-        else MaterialTheme.colorScheme.primary
+        isActive -> MaterialTheme.colorScheme.secondaryContainer
+        else -> MaterialTheme.colorScheme.surface
+    }
 
-    val hasOnclick = if (!isComplete) {
-        onClick
+    val capsuleColor = if (isComplete && !isCabinet) {
+        MaterialTheme.colorScheme.secondary
     } else {
+        MaterialTheme.colorScheme.primary
+    }
+
+    val hasOnClick = if (!isComplete) onClick else {
         {}
     }
 
     InfoCardExtended(
         infoTopLeft = {
-            Text(
-                text = medication.medicineName,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-            )
-            if (isComplete && !isCabinet)
-                Image(
-                    painter = painterResource(R.drawable.circle_check),
-                    contentDescription = "Circle Check",
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = medication.medicineName,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
                 )
+                if (isComplete && !isCabinet) {
+                    Image(
+                        painter = painterResource(R.drawable.circle_check),
+                        contentDescription = "Circle Check",
+                    )
+                }
+            }
         },
         infoTopRight = {
             if (isCabinet) {
@@ -68,6 +79,6 @@ fun MedicationItem(
         containerColor = containerColor,
         icon = R.drawable.capsule,
         iconColor = capsuleColor,
-        onClick = hasOnclick
+        onClick = hasOnClick
     )
 }

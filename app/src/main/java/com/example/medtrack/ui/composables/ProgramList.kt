@@ -19,53 +19,53 @@ fun ProgramList(
     onActiveProgramChange: (IntakeProgram?) -> Unit,
 ) {
     val programs = sampleProgramList
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // TODO: Add logic for conditional rendering
-        if (true) {
-            item {
-                Text(
-                    text = "Active Program",
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                programs.take(1).forEach { program ->
-                    val isActiveProgram = program.id == activeProgram?.id
-                    val activeProgramChange = if (isActiveProgram) null else program
-                    ProgramItem(
-                        program = program,
-                        isActive = program.id == activeProgram?.id
-                    )
-                    {
-                        onActiveProgramChange(activeProgramChange)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
+        item {
+            ProgramListSection(
+                title = "Active Program",
+                programs = programs.take(1),
+                activeProgram = activeProgram,
+                onActiveProgramChange = onActiveProgramChange
+            )
         }
-        if (true) {
-            item {
-                Text(
-                    text = "Inactive Programs",
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                programs.subList(1, programs.size).forEach { program ->
-                    val isActiveProgram = program.id == activeProgram?.id
-                    val activeProgramChange = if (isActiveProgram) null else program
-                    ProgramItem(
-                        program = program,
-                        isActive = program.id == activeProgram?.id
-                    )
-                    {
-                        onActiveProgramChange(activeProgramChange)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
+        item {
+            ProgramListSection(
+                title = "Inactive Programs",
+                programs = programs.subList(1, programs.size),
+                activeProgram = activeProgram,
+                onActiveProgramChange = onActiveProgramChange
+            )
         }
     }
+}
+
+@Composable
+private fun ProgramListSection(
+    title: String,
+    programs: List<IntakeProgram>,
+    activeProgram: IntakeProgram?,
+    onActiveProgramChange: (IntakeProgram?) -> Unit,
+) {
+    Text(
+        text = title,
+        color = MaterialTheme.colorScheme.secondary,
+        style = MaterialTheme.typography.titleSmall,
+        modifier = Modifier.padding(bottom = 8.dp)
+    )
+    programs.forEach { program ->
+        val isActiveProgram = program.id == activeProgram?.id
+        val activeProgramChange = if (isActiveProgram) null else program
+
+        ProgramItem(
+            program = program,
+            isActive = isActiveProgram
+        ) {
+            onActiveProgramChange(activeProgramChange)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+
 }

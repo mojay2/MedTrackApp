@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.medtrack.R
+import com.example.medtrack.ui.util.PageHeaderData
 
 @Composable
-fun HomeHeader() {
+fun MainHeader(
+    pageHeader: PageHeaderData
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -29,8 +31,8 @@ fun HomeHeader() {
             .padding(16.dp)
     ) {
         HeaderText(
-            titleText = "Hello there,",
-            subtitleText = "here are your meds for the day."
+            titleText = pageHeader.title,
+            subtitleText = pageHeader.subtitle
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -39,11 +41,14 @@ fun HomeHeader() {
                 .padding(top = 16.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.home),
-                contentDescription = "Home SVG Art",
-            )
-            DateContainer()
+            if (pageHeader.iconPainter != null) {
+                Image(
+                    painter = painterResource(pageHeader.iconPainter),
+                    contentDescription = "Home SVG Art",
+                )
+            }
+            if (pageHeader == PageHeaderData.HOME)
+                DateContainer()
         }
     }
 }

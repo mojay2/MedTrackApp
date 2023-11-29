@@ -20,54 +20,59 @@ fun MedicationList(
     isCabinet: Boolean = false
 ) {
     val medications = sampleMedicationList
-    val colGap = if (isCabinet) {
-        0.dp
-    } else {
-        16.dp
-    }
+
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(colGap)
+        verticalArrangement = Arrangement.spacedBy(if (isCabinet) 0.dp else 16.dp)
     ) {
         item {
-            if (!isCabinet) {
-                Text(
-                    text = "To Take",
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-            medications.filter { it.isActive }.forEach { medication ->
-                MedicationItem(
-                    medication = medication,
-                    isActive = medication.id == activeMedicine?.id,
-                    isCabinet = isCabinet,
-                ) {
-                    onActiveMedicineChange(medication)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            DisplayMedications(
+                title = if (isCabinet) null else "To Take",
+                medications = medications.filter { it.isActive },
+                activeMedicine = activeMedicine,
+                onActiveMedicineChange = onActiveMedicineChange,
+                isCabinet = isCabinet
+            )
         }
         item {
-            if (!isCabinet) {
-                Text(
-                    text = "Completed",
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-            medications.filter { !it.isActive }.forEach { medication ->
-                MedicationItem(
-                    medication = medication,
-                    isComplete = true,
-                    isActive = medication.id == activeMedicine?.id,
-                    isCabinet = isCabinet,
-                ) {
-                    onActiveMedicineChange(medication)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            DisplayMedications(
+                title = if (isCabinet) null else "Completed",
+                medications = medications.filterNot { it.isActive },
+                activeMedicine = activeMedicine,
+                onActiveMedicineChange = onActiveMedicineChange,
+                isCabinet = isCabinet
+            )
         }
+    }
+}
+
+@Composable
+private fun DisplayMedications(
+    title: String?,
+    medications: List<Medication>,
+    activeMedicine: Medication?,
+    onActiveMedicineChange: (Medication?) -> Unit,
+    isCabinet: Boolean
+) {
+    if (title != null) {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+    }
+
+    medications.forEach { medication ->
+        val isActiveMedicine = medication.id == activeMedicine?.id
+        val activeMedicineChange = if (isActiveMedicine) null else medication
+        MedicationItem(
+            medication = medication,
+            isActive = medication.id == activeMedicine?.id,
+            isComplete = !medication.isActive,
+            isCabinet = isCabinet
+        ) {
+            onActiveMedicineChange(activeMedicineChange)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }

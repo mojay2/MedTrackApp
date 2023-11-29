@@ -3,7 +3,6 @@ package com.example.medtrack.ui.screens.medicine_details
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,8 +35,8 @@ import com.example.medtrack.data.model.IntakeProgram
 import com.example.medtrack.data.model.Medication
 import com.example.medtrack.data.util.sampleMedicationList
 import com.example.medtrack.ui.composables.BottomNavBar
-import com.example.medtrack.ui.composables.DetailsHeader
-import com.example.medtrack.ui.composables.InfoCard
+import com.example.medtrack.ui.composables.MedicineDetailsHeader
+import com.example.medtrack.ui.composables.MedicineDetailsInfoRow
 import com.example.medtrack.ui.composables.ProgramList
 import com.example.medtrack.ui.theme.MedTrackTheme
 import com.example.medtrack.ui.util.LocalCustomColorsPalette
@@ -55,47 +54,7 @@ fun MedicineDetailsScreen(
             BottomNavBar(navController)
         },
         floatingActionButton = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(start = 32.dp)
-                    .fillMaxWidth()
-            ) {
-                if (activeProgram == null) {
-                    ExtendedFloatingActionButton(
-                        containerColor = LocalCustomColorsPalette.current.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                        text = { Text(text = "Add Program") },
-                        icon = { Icon(Icons.Outlined.Add, "Add Icon") },
-                        onClick = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                    )
-                } else {
-                    ExtendedFloatingActionButton(
-                        containerColor = LocalCustomColorsPalette.current.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                        text = { Text(text = "Edit Program") },
-                        icon = { Icon(Icons.Outlined.Today, "Date Icon") },
-                        onClick = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                    )
-                }
-                ExtendedFloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    text = { Text(text = "Edit Medicine") },
-                    icon = { Icon(Icons.Outlined.Edit, "Edit Icon") },
-                    onClick = { },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                )
-            }
+            MedicineDetailsFloatingActionButton(activeProgram)
         }
     ) { innerPadding ->
         Surface(
@@ -109,7 +68,7 @@ fun MedicineDetailsScreen(
                     modifier = Modifier
                         .padding(0.dp)
                 ) {
-                    DetailsHeader(
+                    MedicineDetailsHeader(
                         medication = medicine,
                         pageHeader = PageHeaderData.MEDICINE_DETAILS,
                     )
@@ -119,22 +78,7 @@ fun MedicineDetailsScreen(
                         .padding(top = 136.dp, start = 16.dp, end = 16.dp, bottom = 112.dp)
                         .fillMaxWidth()
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        InfoCard(
-                            infoTitle = "Quantity",
-                            infoText = "${medicine.quantity} pills left",
-                            modifier = Modifier.weight(1f)
-                        )
-                        InfoCard(
-                            infoTitle = "Pill Dosage",
-                            infoText = "${medicine.dosage} mg",
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    MedicineDetailsInfoRow(medicine)
                     Spacer(modifier = Modifier.height(16.dp))
                     ProgramList(
                         activeProgram,
@@ -146,6 +90,45 @@ fun MedicineDetailsScreen(
         }
     }
 }
+
+@Composable
+fun MedicineDetailsFloatingActionButton(activeProgram: IntakeProgram?) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(start = 32.dp)
+            .fillMaxWidth()
+    ) {
+        ExtendedFloatingActionButton(
+            containerColor = LocalCustomColorsPalette.current.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.primary,
+            text = { Text(text = if (activeProgram != null) "Edit Program" else "Add Program") },
+            icon = {
+                Icon(
+                    if (activeProgram != null) Icons.Outlined.Today else Icons.Outlined.Add,
+                    null
+                )
+            },
+            onClick = { },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
+
+        ExtendedFloatingActionButton(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            text = { Text(text = "Edit Medicine") },
+            icon = { Icon(Icons.Outlined.Edit, "Edit Icon") },
+            onClick = { },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

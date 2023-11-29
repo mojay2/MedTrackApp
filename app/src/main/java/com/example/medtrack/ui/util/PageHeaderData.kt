@@ -16,11 +16,13 @@ enum class PageHeaderData(
 ) {
     HOME(
         title = "Hello there,",
-        subtitle = "Here are your meds for the day."
+        subtitle = "Here are your meds for the day.",
+        iconPainter = R.drawable.home
     ),
     CABINET(
         title = "Medicine Cabinet",
-        subtitle = "here are all your medications."
+        subtitle = "here are all your medications.",
+        iconPainter = R.drawable.cabinet
     ),
     MEDICINE_DETAILS(
         title = "Medicine Details",

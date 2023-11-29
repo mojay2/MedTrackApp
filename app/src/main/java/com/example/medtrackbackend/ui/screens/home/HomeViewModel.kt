@@ -106,7 +106,8 @@ class HomeViewModel(
         }
     }
 
-    private fun getIntakeTimesFromDate(date: Date){
+
+    fun getIntakeTimesFromDate(date: Date){
         viewModelScope.launch {
             repository.getAllTimesFromDate(date).collectLatest {
                 state = state.copy(

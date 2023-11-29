@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,9 +30,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.medtrackbackend.data.DateUtil
+import com.example.medtrackbackend.ui.composables.DatePickerDialog
 import com.example.medtrackbackend.ui.composables.IntakeTimeCard
 import com.example.medtrackbackend.ui.composables.MedicineCard
 
@@ -44,6 +49,10 @@ fun HomeScreen(
     val homeViewModel = viewModel(modelClass = HomeViewModel::class.java)
     val homeState = homeViewModel.state
 
+    val mDatePicker = DatePickerDialog(context = LocalContext.current, onDateSelected = {
+        homeViewModel.getIntakeTimesFromDate(DateUtil().asDate(it))
+    })
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -53,6 +62,9 @@ fun HomeScreen(
                 // Bottom app bar content
                 Button(onClick = { navController.navigate("MedicineCabinet") }) {
                     Text("To Cabinet")
+                }
+                IconButton(onClick = { mDatePicker.show() }) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
                 }
             }
         }
@@ -66,7 +78,6 @@ fun HomeScreen(
                 }
             }
             items(homeState.intakeTimes) { intakeTime ->
-//                MedicineCard(medicine = medicine, navController = navController)
                 IntakeTimeCard(item = intakeTime)
             }
         }

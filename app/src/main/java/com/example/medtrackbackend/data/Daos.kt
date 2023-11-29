@@ -60,11 +60,16 @@ interface ProgramDao {
 
 @Dao
 interface TimeDao {
+//    @Update(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun updateIntakeTimeStatus(id: Int, status: Status)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(time: IntakeTime)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(time: IntakeTime)
+
+    @Update
+    suspend fun updateIntakeTimeStatus(intakeTime: IntakeTime)
 
     @Delete
     suspend fun delete(time: IntakeTime)
@@ -92,7 +97,7 @@ interface TimeDao {
         FROM intake_time
         INNER JOIN intake_program ON Intake_Time.programIdFk = program_id
         INNER JOIN medicine ON medIdFk = medicine_id
-        WHERE intake_time.intakeDate = :date
+        WHERE intake_time.intakeDate = :date 
         ORDER BY time ASC
 """)
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>

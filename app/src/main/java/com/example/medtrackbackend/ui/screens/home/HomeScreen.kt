@@ -78,7 +78,8 @@ fun HomeScreen(
                 }
             }
             items(homeState.intakeTimes) { intakeTime ->
-                IntakeTimeCard(item = intakeTime)
+//                IntakeTimeCard(item = intakeTime)
+                IntakeTimeCard(item = intakeTime, homeViewModel = homeViewModel, navController = navController)
             }
         }
     }

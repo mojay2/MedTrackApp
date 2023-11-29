@@ -21,6 +21,11 @@ import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import com.example.medtrackbackend.data.DateUtil
+import com.example.medtrackbackend.data.IntakeTime
+import com.example.medtrackbackend.data.Status
+import com.example.medtrackbackend.data.TimeDao
+import kotlinx.coroutines.isActive
+import java.time.LocalTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
@@ -31,8 +36,6 @@ class HomeViewModel(
 
     init {
         getIntakeTimesToday()
-//        getAllMedicine()
-//        getAllPrograms()
     }
 
     private fun getAllMedicine(){
@@ -91,8 +94,6 @@ class HomeViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getIntakeTimesToday(){
-//        private val dateUtil = DateUtil
-//        val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         val currentDate = DateUtil().asDate(LocalDate.now())
         val currentDatetimeStamp = currentDate.time.toString()
         Log.d("Test Tag", currentDate.toString())
@@ -126,6 +127,41 @@ class HomeViewModel(
             }
         }
     }
+
+    fun tookMedicine(items: IntakeTimesWithProgramAndMedicine){
+        viewModelScope.launch {
+            repository.updateIntakeTimeStatus(
+                IntakeTime(
+                    id = items.intakeTime.id,
+                    programIdFk = items.intakeTime.programIdFk,
+                    time = items.intakeTime.time,
+                    intakeDate = items.intakeTime.intakeDate,
+                    status = Status.TAKEN
+                )
+            )
+            decrementMedicineQuantity(items)
+        }
+    }
+
+    private fun decrementMedicineQuantity(items: IntakeTimesWithProgramAndMedicine){
+        viewModelScope.launch {
+            repository.updateMedicine(
+                Medicine(
+                    id = items.medicine.id,
+                    medicineName = items.medicine.medicineName,
+                    quantity = items.medicine.quantity - items.intakeProgram.numPills,
+                    isActive = items.medicine.isActive,
+                    dosage = items.medicine.dosage
+                )
+            )
+        }
+    }
+
+//    val id: Int = 0,
+//    val programIdFk: Int, // Foreign key reference to Program table
+//    val time: LocalTime,
+//    val intakeDate: Date,
+//    val status: Status
 
 }
 

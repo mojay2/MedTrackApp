@@ -6,6 +6,7 @@ import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.MedicineDao
 import com.example.medtrackbackend.data.ProgramDao
+import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.data.TimeDao
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
@@ -37,6 +38,13 @@ class Repository(
         intakeTimeDao.insert(time)
     }
 
+    suspend fun updateIntakeTimeStatus(time: IntakeTime) {
+        intakeTimeDao.updateIntakeTimeStatus(time)
+    }
+
+    suspend fun updateMedicine(medicine: Medicine){
+        medicineDao.update(medicine = medicine)
+    }
 
     fun getMedicineById(medicineId: Int): Flow<Medicine> {
         return medicineDao.getMedicine(medicineId)

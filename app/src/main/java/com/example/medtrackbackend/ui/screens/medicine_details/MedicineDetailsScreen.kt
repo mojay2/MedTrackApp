@@ -43,8 +43,8 @@ fun MedicineDetailsScreen(
     //sets the programs of the selected medicine
     medicineDetailsViewModel.getIntakeProgramsForMedicine(medicineDetailsState.medicine)
 
-    Log.d("test Tage","${medicineDetailsState.medicinePrograms}")
-
+    Log.d("Medicine Details Screen","${medicineDetailsState.medicine}")
+    Log.d("Medicine Details Screen","${medicineDetailsState.medicinePrograms}")
 
     Scaffold(
         bottomBar = {

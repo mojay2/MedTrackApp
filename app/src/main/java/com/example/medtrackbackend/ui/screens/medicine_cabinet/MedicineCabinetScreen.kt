@@ -49,6 +49,9 @@ fun MedicineCabinetScreen(
                 Button(onClick = { navController.navigate("AddEditMedicine") }) {
                     Text("Create Medicine")
                 }
+                Button(onClick = { navController.navigate("Home") }) {
+                    Text("Home")
+                }
             }
         }
     ) {

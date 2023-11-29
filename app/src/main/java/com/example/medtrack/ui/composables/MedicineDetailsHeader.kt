@@ -67,7 +67,7 @@ private fun BackArrowWithTitle(pageHeader: PageHeaderData) {
 }
 
 @Composable
-fun HeaderContent(
+private fun HeaderContent(
     medication: Medication?,
     pageHeader: PageHeaderData,
     hideMedicineName: Boolean

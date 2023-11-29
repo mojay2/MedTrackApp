@@ -3,7 +3,6 @@ package com.example.medtrack.ui.screens.add_edit_medicine
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -82,20 +81,12 @@ fun AddEditMedicineScreen(
                         .padding(top = 80.dp, start = 16.dp, end = 16.dp, bottom = 72.dp)
                         .fillMaxWidth()
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                    FormDetailsHeader(
+                        medicine = medicine,
+                        openDeleteDialog = openDeleteDialog,
+                        headerText = "Medicine Details",
+                        sideText = "Delete Medicine"
                     )
-                    {
-                        FormDetailsHeader(
-                            medicine = medicine,
-                            openDeleteDialog = openDeleteDialog,
-                            headerText = "Medicine Details",
-                            sideText = "Delete Medicine"
-                        )
-                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditMedicineForm(
                         medicine = medicine

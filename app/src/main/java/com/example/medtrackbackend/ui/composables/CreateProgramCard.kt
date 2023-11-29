@@ -32,9 +32,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
+import com.example.medtrackbackend.data.DateUtil
 import com.example.medtrackbackend.data.Medicine
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -51,7 +55,7 @@ fun CreateProgramCard(
         startDate: Date,
         weeks: Int,
         numPills: Int,
-        time: LocalTime
+        time: LocalTime,
     ) -> Unit,
     onAddTime: (
         time: LocalTime,
@@ -72,7 +76,7 @@ fun CreateProgramCard(
         ) {
             var medicineId = medicine.id
             var programName by rememberSaveable { mutableStateOf("") }
-            var startDate by rememberSaveable { mutableStateOf(Calendar.getInstance().time) }
+            var startDate by rememberSaveable { mutableStateOf(DateUtil().asDate(LocalDate.now())) }
             var weeks by rememberSaveable { mutableStateOf("") }
             var numPills by rememberSaveable { mutableStateOf("") }
             var intakeTime by rememberSaveable {
@@ -95,8 +99,8 @@ fun CreateProgramCard(
                 Spacer(modifier = Modifier.size(4.dp))
                 val mDatePicker = DatePickerDialog(
                     context = LocalContext.current,
-                    onDateSelected = { date ->
-                        startDate = date
+                    onDateSelected = { localDate ->
+                        startDate = DateUtil().asDate(localDate)
                     }
                 )
                 IconButton(onClick = { mDatePicker.show() }) {
@@ -153,6 +157,11 @@ fun CreateProgramCard(
             Button(
                 onClick = {
                     //Validation
+//                    val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    val currentDate = DateUtil().asDate(LocalDate.now())
+                    Log.d("Program Card", currentDate.toString())
+                    Log.d("Program Card", startDate.toString())
+                    Log.d("Program Card: Start Date var", startDate.time.toString())
                     if (programName.isNotBlank() &&
                         weeks.isNotBlank() && numPills.isNotBlank())
                     {
@@ -165,7 +174,7 @@ fun CreateProgramCard(
                         programName = ""
                         weeks = ""
                         numPills = ""
-                        startDate = Calendar.getInstance().time
+                        startDate = DateUtil().asDate(LocalDate.now())
                         intakeTime = LocalTime.now()
                     }
                 },
@@ -180,3 +189,8 @@ fun CreateProgramCard(
 fun formatDate(date: Date):String = SimpleDateFormat(
     "yyyy-MM-dd", Locale.getDefault())
     .format(date)
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun LocalDate.toDate(): Date {
+    return Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant())
+}

@@ -33,7 +33,7 @@ interface MedicineDao {
 @Dao
 interface ProgramDao {
     @Insert
-    suspend fun insert(program: IntakeProgram)
+    suspend fun insert(program: IntakeProgram):Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(program: IntakeProgram)
@@ -87,15 +87,46 @@ interface TimeDao {
 """)
     fun getAllTimesForProgramWithMedicine(programId: Long): Flow<List<IntakeTimesWithProgramAndMedicine>>
 
+//    @Query("""
+//        SELECT *
+//        FROM intake_time
+//        INNER JOIN intake_program ON Intake_Time.programIdFk = intake_time_id
+//        INNER JOIN Medicine ON medIdFk = medicine_id
+//        WHERE Intake_Time.intakeDate = DATE(:date);
+//    """)
+//    fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>
+
+
+
+//@Query("""
+//    SELECT *
+//    FROM intake_time
+//    INNER JOIN intake_program ON Intake_Time.programIdFk = intake_time_id
+//    INNER JOIN Medicine ON medIdFk = medicine_id
+//    WHERE DATE(Intake_Time.intakeDate / 1000, 'unixepoch') = DATE(:date / 1000, 'unixepoch');
+//""")
+//fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>
+
+//    @Query("""
+//    SELECT *
+//    FROM intake_time
+//    INNER JOIN intake_program ON Intake_Time.programIdFk = intake_time_id
+//    INNER JOIN Medicine ON medIdFk = medicine_id
+//    WHERE Intake_Time.intakeDate =:date;
+//""")
+//fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>
+
     @Query("""
         SELECT *
         FROM intake_time
-        INNER JOIN intake_program ON Intake_Time.programIdFk = intake_time_id
-        INNER JOIN Medicine ON medIdFk = medicine_id
-        WHERE Intake_Time.intakeDate = :date;
-    """)
+        INNER JOIN intake_program ON Intake_Time.programIdFk = program_id
+        INNER JOIN medicine ON medIdFk = medicine_id
+        WHERE intake_time.intakeDate = :date;
+""")
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>
 }
+
+
 
 
 data class IntakeTimesWithProgramAndMedicine(

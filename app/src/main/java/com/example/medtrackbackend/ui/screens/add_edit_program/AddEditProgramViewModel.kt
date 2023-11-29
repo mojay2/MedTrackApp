@@ -14,21 +14,23 @@ import com.example.medtrackbackend.data.IntakeTime
 import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
+import com.example.medtrackbackend.ui.composables.toLocalDateTime
 import com.example.medtrackbackend.ui.repository.Repository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
 
+@RequiresApi(Build.VERSION_CODES.O)
 class AddEditProgramViewModel(
     private val repository: Repository = Graph.repository
 ) : ViewModel() {
     var state by mutableStateOf(AddEditProgramState())
         private set
-
 
     fun getMedicine(medicineId: Int) {
         viewModelScope.launch {
@@ -42,10 +44,11 @@ class AddEditProgramViewModel(
 
     fun getLatestProgram() {
         viewModelScope.launch {
-            repository.latestProgram.collectLatest {
-                state = state.copy(
-                    latestProgram = it
-                )
+            val latestProgram = repository.latestProgram.firstOrNull()
+            if (latestProgram != null) {
+                state = state.copy(latestProgram = latestProgram)
+            } else {
+                // Handle the error here
             }
         }
     }
@@ -60,50 +63,6 @@ class AddEditProgramViewModel(
         }
     }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun insertProgram(
-//        medicineId: Int,
-//        programName: String,
-//        startDate: Date,
-//        weeks: Int,
-//        numPills: Int,
-//        time: LocalTime
-//    ) {
-//        viewModelScope.launch {
-//            // Insert the program
-//            repository.insertProgram(
-//                IntakeProgram(
-//                    medIdFk = medicineId,
-//                    programName = programName,
-//                    startDate = startDate,
-//                    weeks = weeks,
-//                    numPills = numPills,
-//                )
-//            )
-//
-//            Log.d("Test Tag" , "Program Inserted")
-//            val programFk = countTimeEntries()
-//            Log.d("Test Tag" , programFk.toString())
-////            // Generate intake times
-//            val intakeTimes = generateIntakeTimes(startDate, weeks, time)
-////            Log.d("Test Tag" , intakeTimes.toString())
-//
-////
-////            // Insert intake times into the database
-//            intakeTimes.forEach { intakeTime ->
-//                repository.insertTime(
-//                    IntakeTime(
-//                        programIdFk = programFk, // Use the programId from the inserted program
-//                        time = time,  // Use the specified time for each intake time
-//                        intakeDate = intakeTime,
-//                        status = Status.UPCOMING
-//                    )
-//                )
-//            }
-//            Log.d("Test Tag" , "Times Inserted")
-//        }
-//    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun insertProgram(
         medicineId: Int,
@@ -111,7 +70,7 @@ class AddEditProgramViewModel(
         startDate: Date,
         weeks: Int,
         numPills: Int,
-        time: LocalTime
+        time: LocalTime,
     ) {
         viewModelScope.launch {
             try {
@@ -123,68 +82,87 @@ class AddEditProgramViewModel(
                     weeks = weeks,
                     numPills = numPills
                 )
-                repository.insertProgram(program)
+                val createdProgramID = repository.insertProgram(program)
+                state = state.copy(programId = createdProgramID.toInt())
+                insertIntakeTimes2(createdProgramID.toInt(), startDate, weeks, time)
+                Log.d("AddEditProgramVM", "Program ID inserted:${createdProgramID}")
+                Log.d("AddEditProgramVM", "Program ID in State:${state.programId}")
             } catch (e: Exception) {
-                Log.e("Test Tag", "Insert Program failed: ${e.message}", e)
+                Log.e("AddEditProgramVM", "Insert Program failed: ${e.message}", e)
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun insertIntakeTimes(programFk: Int, startDate: Date, weeks: Int, time: LocalTime) {
-        val intakeTimes = generateIntakeTimes(startDate, weeks, time)
-        Log.d("Test Tag", "$intakeTimes")
-
+    private fun insertIntakeTimes2(id: Int, startDate: Date, weeks: Int, time: LocalTime) {
+        val intakeDates = generateIntakeDates(startDate, weeks)
+        Log.d("AddEditProgramVM", "Program ID in Insert Time:${state.programId}")
         viewModelScope.launch {
-            intakeTimes.forEach { intakeTime ->
+            intakeDates.forEach { intakeDate ->
                 try {
                     repository.insertTime(
                         IntakeTime(
-                            programIdFk = programFk,
+                            programIdFk = id,
                             time = time,
-                            intakeDate = intakeTime,
+                            intakeDate = intakeDate,
                             status = Status.UPCOMING
                         )
                     )
+                    Log.e("AddEditProgramVM", "Time Inserted:${time}")
+
                 } catch (e: Exception) {
-                    Log.e("Test Tag", "Insert Intake Time failed: ${e.message}", e)
+                    Log.e("AddEditProgramVM", "Insert Intake Time failed: ${e.message}", e)
                 }
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun generateIntakeTimes(startDate: Date, weeks: Int, time: LocalTime): List<Date> {
-        val intakeTimesAndDates = mutableListOf<Date>()
+    fun insertIntakeTimes(startDate: Date, weeks: Int, time: LocalTime) {
+        val intakeDates = generateIntakeDates(startDate, weeks)
+        Log.d("AddEditProgramVM", "Program ID in Insert Time:${state.programId}")
+        viewModelScope.launch {
+            intakeDates.forEach { intakeDate ->
+                try {
+                        repository.insertTime(
+                        IntakeTime(
+                            programIdFk = state.programId,
+                            time = time,
+                            intakeDate = intakeDate,
+                            status = Status.UPCOMING
+                        )
+                    )
+                    Log.e("AddEditProgramVM", "Time Inserted:${time}")
+
+                } catch (e: Exception) {
+                    Log.e("AddEditProgramVM", "Insert Intake Time failed: ${e.message}", e)
+                }
+            }
+        }
+    }
+
+    private fun generateIntakeDates(startDate: Date, weeks: Int): List<Date> {
         val calendar = Calendar.getInstance()
         calendar.time = startDate
 
-        val hourOfDay = time.hour
-        val minute = time.minute
-
-        for (week in 0 until (weeks * 7)) {
-            // Calculate the intake time based on the time, without an interval
-            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-            calendar.set(Calendar.MINUTE, minute)
-            calendar.set(Calendar.SECOND, 0)
-            val intakeTime = calendar.time
-            intakeTimesAndDates.add(intakeTime)
-
-            // Increment the calendar by one week for the next iteration
-            calendar.add(Calendar.WEEK_OF_YEAR, 1)
+        val intakeDates = mutableListOf<Date>()
+        repeat(weeks * 7) {
+            intakeDates.add(calendar.time)
+            calendar.add(Calendar.DAY_OF_YEAR, 1) // Increment by one day for the next iteration
         }
 
-        return intakeTimesAndDates
+        return intakeDates
     }
 }
 
 data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
-    val medicine: Medicine = Medicine(999, "", 999, 999.9, false),
+    val medicine: Medicine = Medicine(999, "", 999,
+        999.9, false),
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
     val intakeTimeChecked: Boolean = false,
     val programs: List<IntakeProgram> = emptyList(),
     val timeList: List<IntakeTime> = emptyList(),
-    val latestProgram: IntakeProgram = IntakeProgram(999, 999, "",
+    val latestProgram: IntakeProgram = IntakeProgram(-1, 999, "",
         Date(0),999, 999),
+    val programId: Int = -1
 )

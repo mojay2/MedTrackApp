@@ -29,8 +29,8 @@ class Repository(
         medicineDao.insert(medicine)
     }
 
-    suspend fun insertProgram(program: IntakeProgram) {
-        intakeProgramDao.insert(program)
+    suspend fun insertProgram(program: IntakeProgram):Long {
+         return intakeProgramDao.insert(program)
     }
 
     suspend fun insertTime(time: IntakeTime) {

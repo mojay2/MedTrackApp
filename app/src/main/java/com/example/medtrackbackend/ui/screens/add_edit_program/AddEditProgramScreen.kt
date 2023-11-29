@@ -30,11 +30,11 @@ fun AddEditProgramScreen(
     val addEditProgramState = addEditProgramViewModel.state
 
     addEditProgramViewModel.getMedicine(Integer.parseInt(medicineIdString))
-    addEditProgramViewModel.getLatestProgram()
     val medicine: Medicine =  addEditProgramState.medicine
-    val latestProgramId: Int = addEditProgramState.latestProgram.id + 1
 
-    Log.d("Testing Tag", "Medicine Id in add program screen: ${medicine.id}")
+    Log.d("AddEditProgramScreen", "Medicine Id in add program screen: ${medicine.id}")
+//    Log.d("AddEditProgramScreen", "Program ID being passed: ${latestProgramId}")
+
     Scaffold(
     ) {
         LazyColumn {
@@ -47,9 +47,9 @@ fun AddEditProgramScreen(
                         )
                     },
                     onAddTime = { time, startDate, weeks ->
-                        addEditProgramViewModel.insertIntakeTimes(
-                            latestProgramId ,startDate,weeks, time
-                        )
+//                        addEditProgramViewModel.insertIntakeTimes(
+//                            startDate,weeks, time
+//                        )
                     }
                 )
             }

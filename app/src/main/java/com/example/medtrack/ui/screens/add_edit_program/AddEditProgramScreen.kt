@@ -1,5 +1,7 @@
 package com.example.medtrack.ui.screens.add_edit_program
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +42,7 @@ import com.example.medtrack.ui.util.LocalCustomColorsPalette
 import com.example.medtrack.ui.util.PageHeaderData
 import com.example.medtrack.ui.util.Routes
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddEditProgramScreen(
     navController: NavHostController,
@@ -81,9 +84,9 @@ fun AddEditProgramScreen(
                 ) {
                     FormDetailsHeader(
                         program = program,
-                        openDeleteDialog = openDeleteDialog,
                         headerText = "Program Details",
-                        sideText = "Delete Program"
+                        subHeaderText = "Delete Program",
+                        subHeaderOnClick = { openDeleteDialog.value = true }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditProgramForm(
@@ -138,6 +141,7 @@ fun AddEditProgramFloatingActionButton(submitButtonText: String) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun AddEditProgramScreen() {

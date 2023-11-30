@@ -74,7 +74,7 @@ fun HomeScreen(
                 }
                 Column(
                     modifier = Modifier
-                        .padding(top = 56.dp, start = 16.dp, end = 72.dp)
+                        .padding(top = 56.dp, start = 16.dp, end = 16.dp, bottom = 72.dp)
                 ) {
                     MedicationList(
                         activeMedicine,

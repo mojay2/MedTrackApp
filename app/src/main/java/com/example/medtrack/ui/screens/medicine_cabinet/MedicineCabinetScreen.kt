@@ -68,7 +68,7 @@ fun MedicineCabinetScreen(
                 }
                 Column(
                     modifier = Modifier
-                        .padding(top = 96.dp, start = 16.dp, end = 72.dp)
+                        .padding(top = 96.dp, start = 16.dp, end = 16.dp, bottom = 72.dp)
                 ) {
                     MedicationList(
                         activeMedicine,

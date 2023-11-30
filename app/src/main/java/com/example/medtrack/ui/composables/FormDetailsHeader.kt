@@ -7,20 +7,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.medtrack.data.model.IntakeProgram
 import com.example.medtrack.data.model.Medication
 
+enum class FormHeaderSize {
+    SMALL, LARGE
+}
+
 @Composable
 fun FormDetailsHeader(
     medicine: Medication? = null,
     program: IntakeProgram? = null,
-    openDeleteDialog: MutableState<Boolean>,
     headerText: String,
-    sideText: String,
+    subHeaderText: String,
+    subHeaderOnClick: () -> Unit = {},
+    size: FormHeaderSize = FormHeaderSize.LARGE,
+    showSubHeader: Boolean = false,
 ) {
+    val formHeaderSize = when (size) {
+        FormHeaderSize.SMALL -> MaterialTheme.typography.bodySmall
+        FormHeaderSize.LARGE -> MaterialTheme.typography.titleMedium
+    }
+
+    val formSubHeaderSize = when (size) {
+        FormHeaderSize.SMALL -> MaterialTheme.typography.bodySmall
+        FormHeaderSize.LARGE -> MaterialTheme.typography.labelLarge
+    }
+
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -29,16 +44,17 @@ fun FormDetailsHeader(
     ) {
         Text(
             text = headerText,
-            style = MaterialTheme.typography.titleMedium,
+            style = formHeaderSize,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (medicine != null || program != null) {
+        if (medicine != null || program != null || showSubHeader) {
             Text(
-                text = sideText,
-                style = MaterialTheme.typography.labelLarge,
+                text = subHeaderText,
+                style = formSubHeaderSize,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
-                    .clickable { openDeleteDialog.value = true }
+                    .clickable { subHeaderOnClick() }
+
             )
         }
     }

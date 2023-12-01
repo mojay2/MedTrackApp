@@ -25,6 +25,7 @@ import com.example.medtrack.data.model.Medication
 fun AddEditMedicineForm(
     medicine: Medication? = null,
 ) {
+    // TODO: Maybe change these? Medyo panget itsura nung variables HAHAH. ewan ko kung me form helper sa kotlin or compose
     var editedMedicineName by remember { mutableStateOf(medicine?.medicineName ?: "") }
     var editedQuantity by remember { mutableStateOf(medicine?.quantity?.toString() ?: "") }
     var editedDosage by remember { mutableStateOf(medicine?.dosage?.toString() ?: "") }

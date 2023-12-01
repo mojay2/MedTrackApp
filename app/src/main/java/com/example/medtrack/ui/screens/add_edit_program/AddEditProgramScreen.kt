@@ -83,10 +83,10 @@ fun AddEditProgramScreen(
                         .fillMaxWidth()
                 ) {
                     FormDetailsHeader(
-                        program = program,
                         headerText = "Program Details",
                         subHeaderText = "Delete Program",
-                        subHeaderOnClick = { openDeleteDialog.value = true }
+                        subHeaderOnClick = { openDeleteDialog.value = true },
+                        showSubHeader = program != null,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditProgramForm(

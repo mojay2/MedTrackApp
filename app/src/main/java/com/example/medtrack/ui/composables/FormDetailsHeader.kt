@@ -9,33 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.medtrack.data.model.IntakeProgram
-import com.example.medtrack.data.model.Medication
-
-enum class FormHeaderSize {
-    SMALL, LARGE
-}
 
 @Composable
 fun FormDetailsHeader(
-    medicine: Medication? = null,
-    program: IntakeProgram? = null,
     headerText: String,
     subHeaderText: String,
     subHeaderOnClick: () -> Unit = {},
-    size: FormHeaderSize = FormHeaderSize.LARGE,
     showSubHeader: Boolean = false,
 ) {
-    val formHeaderSize = when (size) {
-        FormHeaderSize.SMALL -> MaterialTheme.typography.bodySmall
-        FormHeaderSize.LARGE -> MaterialTheme.typography.titleMedium
-    }
-
-    val formSubHeaderSize = when (size) {
-        FormHeaderSize.SMALL -> MaterialTheme.typography.bodySmall
-        FormHeaderSize.LARGE -> MaterialTheme.typography.labelLarge
-    }
-
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -44,17 +25,16 @@ fun FormDetailsHeader(
     ) {
         Text(
             text = headerText,
-            style = formHeaderSize,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (medicine != null || program != null || showSubHeader) {
+        if (showSubHeader) {
             Text(
                 text = subHeaderText,
-                style = formSubHeaderSize,
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .clickable { subHeaderOnClick() }
-
             )
         }
     }

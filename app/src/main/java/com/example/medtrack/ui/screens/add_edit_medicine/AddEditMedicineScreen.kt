@@ -82,10 +82,10 @@ fun AddEditMedicineScreen(
                         .fillMaxWidth()
                 ) {
                     FormDetailsHeader(
-                        medicine = medicine,
-                        openDeleteDialog = openDeleteDialog,
                         headerText = "Medicine Details",
-                        sideText = "Delete Medicine"
+                        subHeaderText = "Delete Medicine",
+                        subHeaderOnClick = { openDeleteDialog.value = true },
+                        showSubHeader = medicine != null,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditMedicineForm(

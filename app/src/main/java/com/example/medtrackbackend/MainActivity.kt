@@ -33,7 +33,14 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "Home") {
                     composable("MedicineCabinet") { MedicineCabinetScreen(navController) }
                     composable("Home") { HomeScreen(navController) }
-                    composable("AddEditMedicine") { AddEditMedicineScreen(navController) }
+                    composable("AddEditMedicine") { AddEditMedicineScreen(navController, -1) }
+                    composable(
+                        "AddEditMedicine/{medicineId}",
+                        arguments = listOf(navArgument("medicineId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
+                        AddEditMedicineScreen(navController, medicineId.toInt())
+                    }
                     composable(
                         "MedicineDetails/{medicineId}",
                         arguments = listOf(navArgument("medicineId") { type = NavType.StringType })

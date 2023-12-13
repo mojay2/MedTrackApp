@@ -60,6 +60,22 @@ class AddEditMedicineViewModel(
         }
     }
 
+    fun updateMedicine(id: Int, medicineName: String, qty: Int, dosage:Double){
+        viewModelScope.launch {
+            repository.updateMedicine(
+                Medicine(
+                    id = id,
+                    medicineName = medicineName,
+                    quantity = qty,
+                    dosage = dosage,
+                    isActive = true
+                )
+            )
+        }
+    }
+
+
+
     fun insertProgram(medicineId: Int,
                       programName:String,
                       startDate:Date,
@@ -112,6 +128,16 @@ class AddEditMedicineViewModel(
         }
     }
 
+    fun getMedicine(medicineId: Int) {
+        viewModelScope.launch {
+            repository.getMedicineById(medicineId).collectLatest {
+                state = state.copy(
+                    selectedMedicine = it
+                )
+            }
+        }
+    }
+
 }
 
 data class AddEditMedicineState(
@@ -119,5 +145,7 @@ data class AddEditMedicineState(
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
     val intakeTimeChecked : Boolean = false,
-    val programs: List<IntakeProgram> = emptyList()
+    val programs: List<IntakeProgram> = emptyList(),
+    val selectedMedicine : Medicine = Medicine(999, "", 999,
+        999.9, false),
 )

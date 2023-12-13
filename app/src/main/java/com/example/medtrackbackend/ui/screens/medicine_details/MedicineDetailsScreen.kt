@@ -43,9 +43,6 @@ fun MedicineDetailsScreen(
     //sets the programs of the selected medicine
     medicineDetailsViewModel.getIntakeProgramsForMedicine(medicineDetailsState.medicine)
 
-    Log.d("Medicine Details Screen","${medicineDetailsState.medicine}")
-    Log.d("Medicine Details Screen","${medicineDetailsState.medicinePrograms}")
-
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -79,6 +76,9 @@ fun MedicineDetailsScreen(
                 "Dosage: ${medicineDetailsState.medicine.dosage}mg",
                 modifier = Modifier.padding(6.dp)
             )
+            Button(onClick = { navController.navigate("AddEditMedicine/${medicineDetailsState.medicine.id}") }) {
+                Text("Edit Medicine")
+            }
             Button(onClick = { navController.navigate("AddEditProgram/${medicineDetailsState.medicine.id}") }) {
                 Text("Add Program")
             }

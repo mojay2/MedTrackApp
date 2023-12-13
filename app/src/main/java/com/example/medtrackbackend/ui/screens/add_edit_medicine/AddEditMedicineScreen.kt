@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.ui.composables.CreateMedicineCard
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -22,10 +23,16 @@ import java.util.Locale
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddEditMedicineScreen(
-    navController: NavController
+    navController: NavController,
+    medicineId: Int
 ){
     val addEditMedicineViewModel = viewModel(modelClass = AddEditMedicineViewModel::class.java)
     val addEditMedicineState = addEditMedicineViewModel.state
+
+    if(medicineId != -1){
+        addEditMedicineViewModel.getMedicine(medicineId)
+    }
+    val medicine: Medicine =  addEditMedicineState.selectedMedicine
 
     Scaffold(
         bottomBar = {
@@ -39,9 +46,15 @@ fun AddEditMedicineScreen(
             }
         }
     ) {
-        CreateMedicineCard { medicineName, qty, dosage ->
-            addEditMedicineViewModel.insertMedicine(medicineName, qty, dosage)
-        }
+        CreateMedicineCard(
+            onAddMedicine = { medicineName, qty, dosage ->
+                addEditMedicineViewModel.insertMedicine(medicineName, qty, dosage)
+            },
+            onEditMedicine = { medicine, medicineName, qty, dosage ->
+                addEditMedicineViewModel.updateMedicine(medicineId, medicineName, qty, dosage)
+            },
+            medicine
+        )
     }
 }
 

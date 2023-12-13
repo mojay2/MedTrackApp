@@ -1,4 +1,4 @@
-package com.example.medtrackbackend.ui.screens.medicine_cabinet
+package com.example.medtrackbackend.ui.screens.home
 
 import android.os.Build
 import android.util.Log
@@ -38,66 +38,9 @@ class HomeViewModel(
         getIntakeTimesToday()
     }
 
-    private fun getAllMedicine(){
-        viewModelScope.launch {
-            repository.allMedicine.collectLatest {
-                state = state.copy(
-                    medicine = it
-                )
-            }
-        }
-    }
-
-    private fun getAllPrograms(){
-        viewModelScope.launch {
-            repository.allPrograms.collectLatest {
-                state = state.copy(
-                    programs = it
-                )
-            }
-        }
-    }
-
-    fun insertMedicine(medicineName: String, qty: Int, dosage:Double){
-        viewModelScope.launch {
-            repository.insertMedicine(
-                Medicine(
-                    medicineName = medicineName,
-                    quantity = qty,
-                    dosage = dosage,
-                    isActive = true
-                )
-            )
-        }
-    }
-
-    fun insertProgram(medicineId: Int,
-                      programName:String,
-                      startDate:Date,
-                      weeks: Int,
-                      numPills: Int,
-                      interval: Int,
-                      time: String){
-        viewModelScope.launch {
-            Log.d("Test Tag", time)
-            repository.insertProgram(
-                IntakeProgram(
-                    medIdFk = medicineId,
-                    programName=programName,
-                    startDate =startDate,
-                    weeks= weeks,
-                    numPills= numPills,
-                )
-            )
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getIntakeTimesToday(){
         val currentDate = DateUtil().asDate(LocalDate.now())
-        val currentDatetimeStamp = currentDate.time.toString()
-        Log.d("Test Tag", currentDate.toString())
-        Log.d("Test Tag", currentDatetimeStamp)
         viewModelScope.launch {
             repository.getAllTimesFromDate(currentDate).collectLatest {
                 state = state.copy(
@@ -113,16 +56,6 @@ class HomeViewModel(
             repository.getAllTimesFromDate(date).collectLatest {
                 state = state.copy(
                     intakeTimes = it
-                )
-            }
-        }
-    }
-
-    private fun intakeProgramsForMedicine(medicine: Medicine){
-        viewModelScope.launch {
-            repository.getProgramsFromMedicine(medicine.id).collectLatest {
-                state = state.copy(
-                    medicinePrograms = it
                 )
             }
         }
@@ -156,13 +89,6 @@ class HomeViewModel(
             )
         }
     }
-
-//    val id: Int = 0,
-//    val programIdFk: Int, // Foreign key reference to Program table
-//    val time: LocalTime,
-//    val intakeDate: Date,
-//    val status: Status
-
 }
 
 data class HomeState(
@@ -170,5 +96,9 @@ data class HomeState(
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
     val intakeTimeChecked : Boolean = false,
-    val programs: List<IntakeProgram> = emptyList()
+    val programs: List<IntakeProgram> = emptyList(),
+    val dummyMedicine: Medicine = Medicine(999, "", 999,
+        999.9, false),
+    val activeMedicine: Medicine = Medicine(999, "", 999,
+        999.9, false)
 )

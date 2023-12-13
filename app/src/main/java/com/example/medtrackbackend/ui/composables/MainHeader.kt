@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.medtrackbackend.ui.screens.home.HomeViewModel
 import com.example.medtrackbackend.ui.util.PageHeaderData
 
 @Composable
 fun MainHeader(
-    pageHeader: PageHeaderData
+    pageHeader: PageHeaderData,
+    viewModel: HomeViewModel?
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,7 +50,7 @@ fun MainHeader(
                 )
             }
             if (pageHeader == PageHeaderData.HOME)
-                DateContainer()
+                DateContainer(viewModel)
         }
     }
 }

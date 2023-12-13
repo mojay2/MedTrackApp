@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineScreen
 import com.example.medtrackbackend.ui.screens.add_edit_program.AddEditProgramScreen
-import com.example.medtrackbackend.ui.screens.medicine_cabinet.HomeScreen
+import com.example.medtrackbackend.ui.screens.home.HomeScreen
 import com.example.medtrackbackend.ui.screens.medicine_cabinet.MedicineCabinetScreen
 import com.example.medtrackbackend.ui.screens.medicine_details.MedicineDetailsScreen
 import com.example.medtrackbackend.ui.theme.MedTrackBackendTheme

@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
-import com.example.medtrackbackend.ui.screens.medicine_cabinet.HomeViewModel
+import com.example.medtrackbackend.ui.screens.home.HomeViewModel
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)

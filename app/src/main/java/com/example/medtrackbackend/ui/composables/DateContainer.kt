@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.medtrackbackend.ui.screens.home.HomeViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -40,7 +41,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("NewApi")
 @Composable
-fun DateContainer() {
+fun DateContainer(
+    viewModel: HomeViewModel?
+) {
     val state = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Input,
         initialSelectedDateMillis = Calendar.getInstance().timeInMillis
@@ -73,6 +76,7 @@ fun DateContainer() {
             }
         )
     }
+    viewModel?.getIntakeTimesFromDate(activeDate.toDate())
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

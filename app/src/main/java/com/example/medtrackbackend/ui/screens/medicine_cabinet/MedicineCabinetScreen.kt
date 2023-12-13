@@ -86,7 +86,8 @@ fun MedicineCabinetScreen(
                         .padding(0.dp)
                 ) {
                     MainHeader(
-                        pageHeader = PageHeaderData.CABINET
+                        pageHeader = PageHeaderData.CABINET,
+                        viewModel = null
                     )
                 }
                 Column(

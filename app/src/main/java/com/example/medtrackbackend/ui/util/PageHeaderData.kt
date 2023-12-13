@@ -17,17 +17,17 @@ enum class PageHeaderData(
     HOME(
         title = "Hello there,",
         subtitle = "Here are your meds for the day.",
-//        iconPainter = R.drawable.home
+        iconPainter = R.drawable.home
     ),
     CABINET(
         title = "Medicine Cabinet",
         subtitle = "here are all your medications.",
-//        iconPainter = R.drawable.cabinet
+        iconPainter = R.drawable.cabinet
     ),
     MEDICINE_DETAILS(
         title = "Medicine Details",
         subtitle = "here is a detailed look of your medicine.",
-//        iconPainter = R.drawable.capsule
+        iconPainter = R.drawable.capsule
     ),
     ADD_MEDICINE_DETAILS(
         title = "Add Medicine",

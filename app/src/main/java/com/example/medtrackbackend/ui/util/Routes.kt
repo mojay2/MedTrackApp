@@ -1,4 +1,4 @@
-package com.example.medtrack.ui.util
+package com.example.medtrackbackend.ui.util
 
 object Routes {
     const val HOME = "home"

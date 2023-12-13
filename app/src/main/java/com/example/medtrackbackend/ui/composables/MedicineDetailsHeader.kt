@@ -106,7 +106,7 @@ private fun HeaderContent(
                 )
             }
         }
-        if (!hideMedicineName && medication != null) {
+        if (!hideMedicineName && medication.id != -1 && medication.id != 999) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = medication.medicineName,

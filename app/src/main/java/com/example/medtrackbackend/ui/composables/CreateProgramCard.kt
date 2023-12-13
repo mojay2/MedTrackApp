@@ -118,8 +118,6 @@ fun CreateProgramCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-//                Text(text = "Selected Time: ${intakeTime}")
                 Text(text = "Selected Time: ${intakeTime.format(DateTimeFormatter.ofPattern("HH:mm"))}")
                 Spacer(modifier = Modifier.size(16.dp))
                 val  timePickerDialog = ShowTimePicker(

@@ -50,6 +50,10 @@ class Repository(
         intakeProgramDao.update(program)
     }
 
+    suspend fun deleteProgramFromId(programId: Int){
+        intakeProgramDao.deleteProgramFromId(programId)
+    }
+
     suspend fun deleteAllTimesFromProgramId(programId: Int){
         intakeTimeDao.deleteAllTimesFromProgramId(programId)
     }

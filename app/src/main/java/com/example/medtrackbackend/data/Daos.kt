@@ -41,6 +41,9 @@ interface ProgramDao {
     @Delete
     suspend fun delete(program: IntakeProgram)
 
+    @Query("DELETE FROM intake_program WHERE program_id = :programId")
+    suspend fun deleteProgramFromId(programId: Int)
+
     @Query("SELECT * FROM intake_program WHERE program_id =:programId")
     fun getProgram(programId: Int): Flow<IntakeProgram>
 

@@ -16,6 +16,7 @@ import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.ui.composables.toLocalDateTime
 import com.example.medtrackbackend.ui.repository.Repository
+import com.example.medtrackbackend.ui.util.AddEditProgramFormData
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.firstOrNull
@@ -42,26 +43,26 @@ class AddEditProgramViewModel(
         }
     }
 
-    fun getLatestProgram() {
-        viewModelScope.launch {
-            val latestProgram = repository.latestProgram.firstOrNull()
-            if (latestProgram != null) {
-                state = state.copy(latestProgram = latestProgram)
-            } else {
-                // Handle the error here
-            }
-        }
-    }
-
-    private fun getAllPrograms(){
-        viewModelScope.launch {
-            repository.allPrograms.collectLatest {
-                state = state.copy(
-                    programs = it
-                )
-            }
-        }
-    }
+//    fun getLatestProgram() {
+//        viewModelScope.launch {
+//            val latestProgram = repository.latestProgram.firstOrNull()
+//            if (latestProgram != null) {
+//                state = state.copy(latestProgram = latestProgram)
+//            } else {
+//                // Handle the error here
+//            }
+//        }
+//    }
+//
+//    private fun getAllPrograms(){
+//        viewModelScope.launch {
+//            repository.allPrograms.collectLatest {
+//                state = state.copy(
+//                    programs = it
+//                )
+//            }
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun insertProgram(
@@ -122,6 +123,21 @@ class AddEditProgramViewModel(
         }
     }
 
+    fun deleteProgram(programId: Int){
+        viewModelScope.launch{
+            try{
+                repository.deleteProgramFromId(programId)
+//                state = state.copy(
+//                    editingProgram = IntakeProgram(999,999,"", Date(0)
+//                        ,999, 999)
+//                )
+                Log.e("AddEditProgramVM", "Deleted Program Successfully")
+            } catch(e: Exception) {
+                Log.e("AddEditProgramVM", "Delete Program failed: ${e.message}", e)
+            }
+        }
+    }
+
     private fun deleteIntakeTimesFromProgramId(programId: Int, startDate: Date, weeks: Int, time: LocalTime){
         viewModelScope.launch {
             try {
@@ -173,10 +189,24 @@ class AddEditProgramViewModel(
         viewModelScope.launch {
             repository.getProgramById(programId).collectLatest {
                 state = state.copy(
-                    editingProgram = it
+                    editingProgram = it ?: IntakeProgram(999, 999, "",
+                        Date(0), 999, 999)
                 )
             }
         }
+    }
+
+    fun setFormData(formData: AddEditProgramFormData){
+        state = state.copy(
+            formData = formData
+        )
+    }
+
+    fun resetFormData(){
+        state = state.copy(
+            formData = AddEditProgramFormData("", Date(0), 999
+                , 999, LocalTime.now())
+        )
     }
 }
 
@@ -193,4 +223,8 @@ data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val programId: Int = -1,
     val editingProgram: IntakeProgram = IntakeProgram(999,999,"", Date(0)
         ,999, 999),
+    val dummyMedicine: Medicine = Medicine(999, "", 999,
+        999.9, false),
+    val formData: AddEditProgramFormData = AddEditProgramFormData("", Date(0), 999
+        , 999, LocalTime.now())
 )

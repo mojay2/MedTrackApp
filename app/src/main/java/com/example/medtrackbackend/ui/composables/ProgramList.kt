@@ -1,4 +1,4 @@
-package com.example.medtrack.ui.composables
+package com.example.medtrackbackend.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -10,15 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.medtrack.data.model.IntakeProgram
-import com.example.medtrack.data.util.sampleProgramList
+import com.example.medtrackbackend.data.IntakeProgram
 
 @Composable
 fun ProgramList(
-    activeProgram: IntakeProgram?,
-    onActiveProgramChange: (IntakeProgram) -> Unit,
+    activeProgram: IntakeProgram,
+    onActiveProgramChange: (IntakeProgram?) -> Unit,
+    programs: List<IntakeProgram>
 ) {
-    val programs = sampleProgramList
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp)

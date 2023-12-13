@@ -11,8 +11,10 @@ import com.example.medtrackbackend.Graph
 import com.example.medtrackbackend.data.IntakeProgram
 import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
+import com.example.medtrackbackend.ui.composables.toDate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -51,5 +53,6 @@ data class MedicineDetailsState(
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
     val intakeTimeChecked : Boolean = false,
-    val programs: List<IntakeProgram> = emptyList()
+    val dummyProgram: IntakeProgram = IntakeProgram(999, 999, "",
+        Date(0), 999, 999)
 )

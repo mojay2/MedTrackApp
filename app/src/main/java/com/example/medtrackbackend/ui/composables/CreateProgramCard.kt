@@ -49,6 +49,7 @@ import java.util.Locale
 @Composable
 fun CreateProgramCard(
     medicine:Medicine,
+    programId: Int,
     onAddProgram: (
         medicineId: Int,
         programName:String,
@@ -57,13 +58,18 @@ fun CreateProgramCard(
         numPills: Int,
         time: LocalTime,
     ) -> Unit,
-    onAddTime: (
-        time: LocalTime,
+    onEditProgram: (
+        medicineId: Int,
+        programId: Int,
+        programName:String,
         startDate: Date,
         weeks: Int,
+        numPills: Int,
+        time: LocalTime,
     ) -> Unit,
 ) {
     Log.d("Testing Tag", "Medicine ID Here in add program card: ${medicine.id}")
+    val isEditing = programId != 999 && programId != -1
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,17 +165,18 @@ fun CreateProgramCard(
                     //Validation
 //                    val currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
                     val currentDate = DateUtil().asDate(LocalDate.now())
-                    Log.d("Program Card", currentDate.toString())
-                    Log.d("Program Card", startDate.toString())
-                    Log.d("Program Card: Start Date var", startDate.time.toString())
-                    if (programName.isNotBlank() &&
+                    if ( programName.isNotBlank() &&
                         weeks.isNotBlank() && numPills.isNotBlank())
                     {
-                        onAddProgram(medicineId.toInt(), programName, startDate,
-                            weeks.toInt(), numPills.toInt(), intakeTime
-                        )
-
-                        onAddTime(intakeTime, startDate, weeks.toInt())
+                        if(isEditing){
+                            onEditProgram(medicineId.toInt(), programId, programName, startDate,
+                                weeks.toInt(), numPills.toInt(), intakeTime
+                            )
+                        } else {
+                            onAddProgram(medicineId.toInt(), programName, startDate,
+                                weeks.toInt(), numPills.toInt(), intakeTime
+                            )
+                        }
 
                         programName = ""
                         weeks = ""
@@ -180,7 +187,7 @@ fun CreateProgramCard(
                 },
                 modifier = Modifier.padding(top = 16.dp),
             ) {
-                Text("Add Program")
+                if(isEditing) Text("Update Program") else Text("Add Program")
             }
         }
     }

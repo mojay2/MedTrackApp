@@ -151,7 +151,13 @@ fun MedicineDetailsFloatingActionButton(
                     null
                 )
             },
-            onClick = { navController.navigate("AddEditProgram/${viewModel.state.medicine.id}")},
+            onClick = {
+                if(activeExists){
+                    navController.navigate("AddEditProgram/${viewModel.state.medicine.id}/${activeProgram.id}")
+                }else{
+                    navController.navigate("AddEditProgram/${viewModel.state.medicine.id}/-1")
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp)

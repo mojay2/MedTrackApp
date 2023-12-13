@@ -46,6 +46,14 @@ class Repository(
         medicineDao.update(medicine = medicine)
     }
 
+    suspend fun updateProgram(program: IntakeProgram) {
+        intakeProgramDao.update(program)
+    }
+
+    suspend fun deleteAllTimesFromProgramId(programId: Int){
+        intakeTimeDao.deleteAllTimesFromProgramId(programId)
+    }
+
     fun getMedicineById(medicineId: Int): Flow<Medicine> {
         return medicineDao.getMedicine(medicineId)
     }
@@ -77,4 +85,6 @@ class Repository(
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>> {
         return intakeTimeDao.getAllTimesFromDate(date)
     }
+
+
 }

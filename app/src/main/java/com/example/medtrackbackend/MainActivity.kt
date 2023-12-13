@@ -52,11 +52,14 @@ class MainActivity : ComponentActivity() {
                         MedicineDetailsScreen(navController, medicineId)
                     }
                     composable(
-                        "AddEditProgram/{medicineId}",
-                        arguments = listOf(navArgument("medicineId") { type = NavType.StringType })
+                        "AddEditProgram/{medicineId}/{programId}",
+                        arguments = listOf(
+                            navArgument("medicineId") { type = NavType.IntType },
+                            navArgument("programId") { type = NavType.IntType })
                     ) { backStackEntry ->
-                        val medicineId = backStackEntry.arguments?.getString("medicineId") ?: ""
-                        AddEditProgramScreen(navController, medicineId)
+                        val medicineId = backStackEntry.arguments?.getInt("medicineId") ?: -1
+                        val programId = backStackEntry.arguments?.getInt("programId") ?: -1
+                        AddEditProgramScreen(navController, medicineId, programId)
                     }
                 }
             }

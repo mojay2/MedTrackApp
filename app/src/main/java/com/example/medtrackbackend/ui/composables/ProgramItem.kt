@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
+import com.example.medtrackbackend.data.DateUtil
 import com.example.medtrackbackend.data.IntakeProgram
 
 @Composable
@@ -12,6 +13,7 @@ fun ProgramItem(
     isActive: Boolean = false,
     onClick: () -> Unit
 ) {
+    val dateUtil = DateUtil()
     val containerColor =
         if (isActive) MaterialTheme.colorScheme.secondaryContainer
         else MaterialTheme.colorScheme.surface
@@ -28,14 +30,14 @@ fun ProgramItem(
         },
         infoTopRight = {
             Text(
-                text = "Nov 15, 2023 - Jan 10, 2024",
+                text = "${dateUtil.formatDateMMDDYYYY(program.startDate)}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.secondary
             )
         },
         infoBottomLeft = {
             Text(
-                text = "8 weeks | 6 weeks left",
+                text = "${program.weeks} weeks | _ weeks left",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary
             )

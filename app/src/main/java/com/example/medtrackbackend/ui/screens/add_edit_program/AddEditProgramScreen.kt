@@ -24,13 +24,18 @@ import java.util.Locale
 @Composable
 fun AddEditProgramScreen(
     navController: NavController,
-    medicineIdString: String
+    medicineId: Int,
+    programId: Int
 ){
     val addEditProgramViewModel = viewModel(modelClass = AddEditProgramViewModel::class.java)
     val addEditProgramState = addEditProgramViewModel.state
 
-    addEditProgramViewModel.getMedicine(Integer.parseInt(medicineIdString))
+    addEditProgramViewModel.getMedicine(medicineId)
     val medicine: Medicine =  addEditProgramState.medicine
+
+    if (programId != -1) {
+        addEditProgramViewModel.getEditingProgram(programId)
+    }
 
     Log.d("AddEditProgramScreen", "Medicine Id in add program screen: ${medicine.id}")
 //    Log.d("AddEditProgramScreen", "Program ID being passed: ${latestProgramId}")
@@ -39,17 +44,20 @@ fun AddEditProgramScreen(
     ) {
         LazyColumn {
             item {
-                CreateProgramCard(medicine,
+                CreateProgramCard(
+                    medicine,
+                    programId,
                     onAddProgram = { medicineId, programName, startDate, weeks, numPills, time ->
                         addEditProgramViewModel.insertProgram(
                             medicineId, programName, startDate,
                             weeks, numPills, time
                         )
                     },
-                    onAddTime = { time, startDate, weeks ->
-//                        addEditProgramViewModel.insertIntakeTimes(
-//                            startDate,weeks, time
-//                        )
+                    onEditProgram = { medicineId, programId, programName, startDate, weeks, numPills, time ->
+                        addEditProgramViewModel.updateProgram(
+                            medicineId, programId, programName, startDate,
+                            weeks, numPills, time
+                        )
                     }
                 )
             }

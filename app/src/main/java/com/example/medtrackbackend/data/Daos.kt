@@ -101,6 +101,8 @@ interface TimeDao {
         ORDER BY time ASC
 """)
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>
+    @Query("DELETE FROM intake_time WHERE programIdFk = :programId")
+    suspend fun deleteAllTimesFromProgramId(programId: Int)
 }
 
 

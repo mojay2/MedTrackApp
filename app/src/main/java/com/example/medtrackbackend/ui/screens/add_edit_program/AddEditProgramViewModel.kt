@@ -84,7 +84,7 @@ class AddEditProgramViewModel(
                 )
                 val createdProgramID = repository.insertProgram(program)
                 state = state.copy(programId = createdProgramID.toInt())
-                insertIntakeTimes2(createdProgramID.toInt(), startDate, weeks, time)
+                insertIntakeTimes(createdProgramID.toInt(), startDate, weeks, time)
                 Log.d("AddEditProgramVM", "Program ID inserted:${createdProgramID}")
                 Log.d("AddEditProgramVM", "Program ID in State:${state.programId}")
             } catch (e: Exception) {
@@ -93,7 +93,47 @@ class AddEditProgramViewModel(
         }
     }
 
-    private fun insertIntakeTimes2(id: Int, startDate: Date, weeks: Int, time: LocalTime) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateProgram(
+        medicineId: Int,
+        programId: Int,
+        programName: String,
+        startDate: Date,
+        weeks: Int,
+        numPills: Int,
+        time: LocalTime,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Insert the program
+                val program = IntakeProgram(
+                    id = programId,
+                    medIdFk = medicineId,
+                    programName = programName,
+                    startDate = startDate,
+                    weeks = weeks,
+                    numPills = numPills
+                )
+                repository.updateProgram(program)
+                deleteIntakeTimesFromProgramId(programId, startDate, weeks, time)
+            } catch (e: Exception) {
+                Log.e("AddEditProgramVM", "Update Program failed: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun deleteIntakeTimesFromProgramId(programId: Int, startDate: Date, weeks: Int, time: LocalTime){
+        viewModelScope.launch {
+            try {
+                repository.deleteAllTimesFromProgramId(programId)
+                insertIntakeTimes(programId, startDate, weeks, time)
+            } catch (e: Exception) {
+                Log.e("AddEditProgramVM", "Delete Program Times failed: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun insertIntakeTimes(id: Int, startDate: Date, weeks: Int, time: LocalTime) {
         val intakeDates = generateIntakeDates(startDate, weeks)
         Log.d("AddEditProgramVM", "Program ID in Insert Time:${state.programId}")
         viewModelScope.launch {
@@ -102,30 +142,6 @@ class AddEditProgramViewModel(
                     repository.insertTime(
                         IntakeTime(
                             programIdFk = id,
-                            time = time,
-                            intakeDate = intakeDate,
-                            status = Status.UPCOMING
-                        )
-                    )
-                    Log.e("AddEditProgramVM", "Time Inserted:${time}")
-
-                } catch (e: Exception) {
-                    Log.e("AddEditProgramVM", "Insert Intake Time failed: ${e.message}", e)
-                }
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun insertIntakeTimes(startDate: Date, weeks: Int, time: LocalTime) {
-        val intakeDates = generateIntakeDates(startDate, weeks)
-        Log.d("AddEditProgramVM", "Program ID in Insert Time:${state.programId}")
-        viewModelScope.launch {
-            intakeDates.forEach { intakeDate ->
-                try {
-                        repository.insertTime(
-                        IntakeTime(
-                            programIdFk = state.programId,
                             time = time,
                             intakeDate = intakeDate,
                             status = Status.UPCOMING
@@ -152,6 +168,16 @@ class AddEditProgramViewModel(
 
         return intakeDates
     }
+
+    fun getEditingProgram(programId: Int) {
+        viewModelScope.launch {
+            repository.getProgramById(programId).collectLatest {
+                state = state.copy(
+                    editingProgram = it
+                )
+            }
+        }
+    }
 }
 
 data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
@@ -164,5 +190,7 @@ data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val timeList: List<IntakeTime> = emptyList(),
     val latestProgram: IntakeProgram = IntakeProgram(-1, 999, "",
         Date(0),999, 999),
-    val programId: Int = -1
+    val programId: Int = -1,
+    val editingProgram: IntakeProgram = IntakeProgram(999,999,"", Date(0)
+        ,999, 999),
 )

@@ -80,8 +80,10 @@ fun AddEditMedicineScreen(
             AddEditMedicineFloatingActionButton(
                 submitButtonText,
                 addEditMedicineViewModel,
-                medicineFormData
-            )
+                medicineFormData,
+                medicine,
+                navController,
+                )
         }
     ) { innerPadding ->
         Surface(
@@ -120,8 +122,10 @@ fun AddEditMedicineScreen(
                 AddEditMedicineFloatingActionButton(
                     submitButtonText,
                     addEditMedicineViewModel,
-                    medicineFormData
-                )
+                    medicineFormData,
+                    medicine,
+                    navController
+                    )
             }
 
 
@@ -143,7 +147,9 @@ fun AddEditMedicineScreen(
                     icon = Icons.Filled.Check
                 )
             }
-            //Old backend logic, delete after integration
+
+//TODO: backend logic, delete after integration is finalized
+
 //            CreateMedicineCard(
 //                onAddMedicine = { medicineName, qty, dosage ->
 //                    addEditMedicineViewModel.insertMedicine(medicineName, qty, dosage)
@@ -161,7 +167,9 @@ fun AddEditMedicineScreen(
 fun AddEditMedicineFloatingActionButton(
     submitButtonText: String,
     viewModel: AddEditMedicineViewModel,
-    medicineFormData: AddEditMedicineFormData
+    medicineFormData: AddEditMedicineFormData,
+    medicine: Medicine,
+    navController: NavController
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -180,13 +188,27 @@ fun AddEditMedicineFloatingActionButton(
                 val editedDosage = medicineFormData.dosage
                 val editedQuantity = medicineFormData.quantity
                 if (editedMedicineName.isNotBlank() && editedDosage >= 0 && editedQuantity >= 0) {
-                    viewModel.insertMedicine(
-                        medicineFormData.medicineName,
-                        medicineFormData.quantity,
-                        medicineFormData.dosage)
+                    if(medicine.id != 999){
+                        viewModel.updateMedicine(
+                            medicine.id,
+                            medicineFormData.medicineName,
+                            medicineFormData.quantity,
+                            medicineFormData.dosage
+                        )
+                        navController.navigate("medicinecabinet")
+                    }
+                    else{
+                        viewModel.insertMedicine(
+                            medicineFormData.medicineName,
+                            medicineFormData.quantity,
+                            medicineFormData.dosage
+                        )
+                        navController.navigate("medicinecabinet")
+                    }
                 }else{
                     Toast.makeText(null, "Test", Toast.LENGTH_LONG).show()
                 }
+
             },
             modifier = Modifier
                 .fillMaxWidth()

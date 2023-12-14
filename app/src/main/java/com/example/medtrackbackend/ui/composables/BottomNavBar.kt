@@ -32,13 +32,13 @@ fun BottomNavBar(navController: NavController) {
         navController.currentBackStackEntry?.destination?.route
 
     val homeIconTint =
-        if (currentRoute == Routes.HOME)
+        if (currentRoute == Routes.HOME || currentRoute == "Home")
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.secondary
 
     val cabinetIconTint =
-        if (currentRoute in cabinetRoutes)
+        if (currentRoute != Routes.HOME && currentRoute != "Home" )
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.secondary

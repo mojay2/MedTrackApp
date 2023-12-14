@@ -6,6 +6,7 @@ import com.example.medtrackbackend.ui.repository.Repository
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.medtrackbackend.Graph
 import com.example.medtrackbackend.data.IntakeProgram
@@ -14,15 +15,30 @@ import com.example.medtrackbackend.data.Medicine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class AddEditMedicineViewModel(
-    private val repository: Repository = Graph.repository
-): ViewModel(){
+class AddEditMedicineViewModel
+    constructor(
+    private val repository: Repository = Graph.repository,
+    private val medicineId:Int,
+    ): ViewModel(){
     var state by mutableStateOf(AddEditMedicineState())
         private set
 
     init {
         getAllMedicine()
         getAllPrograms()
+        if(medicineId != -1){
+            viewModelScope.launch {
+                repository
+                    .getMedicineById(medicineId)
+                    .collectLatest {
+                        state = state.copy(
+                            editedName = it.medicineName,
+                            editedQty = it.quantity.toString(),
+                            editedDosage = it.dosage.toInt().toString()
+                        )
+                    }
+            }
+        }
     }
 
     private fun getAllMedicine(){
@@ -155,7 +171,12 @@ class AddEditMedicineViewModel(
     }
 
 }
-
+@Suppress("UNCHECKED_CAST")
+class AddEditMedicineViewModelFactory(private val id:Int): ViewModelProvider.Factory{
+    override fun <T: ViewModel> create(modelClass: Class<T>): T{
+        return AddEditMedicineViewModel(medicineId = id) as T
+    }
+}
 data class AddEditMedicineState(
     val medicine: List<Medicine> = emptyList(),
     val programs: List<IntakeProgram> = emptyList(),

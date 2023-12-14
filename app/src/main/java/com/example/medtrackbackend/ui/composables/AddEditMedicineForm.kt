@@ -1,5 +1,6 @@
 package com.example.medtrackbackend.ui.composables
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -28,15 +30,9 @@ import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditMedicineForm(
-    medicine: Medicine,
     viewModel: AddEditMedicineViewModel
 ){
-    // TODO: Maybe change these? Medyo panget itsura nung variables HAHAH. ewan ko kung me form helper sa kotlin or compose
-//    var editedMedicineName by remember { mutableStateOf(medicine?.medicineName ?: "") }
-//    var editedQuantity by remember { mutableStateOf(medicine?.quantity?.toString() ?: "") }
-//    var editedDosage by remember { mutableStateOf(medicine?.dosage?.toString() ?: "") }
-    var editedIsActive by remember { mutableStateOf(medicine?.isActive ?: false) }
-
+    val state = viewModel.state
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -45,7 +41,7 @@ fun AddEditMedicineForm(
             .padding(16.dp)
     ) {
         OutlinedTextField(
-            value = viewModel.state.editedName,
+            value = state.editedName,
             onValueChange = { viewModel.onNameChange(it) },
             label = { Text("Medicine Name") },
             placeholder = { Text("Enter medicine name") },
@@ -53,7 +49,7 @@ fun AddEditMedicineForm(
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = viewModel.state.editedQty,
+            value = state.editedQty,
             onValueChange = { viewModel.onQtyChange(it) },
             label = { Text("Quantity (pill)") },
             placeholder = { Text("Enter quantity") },
@@ -64,7 +60,7 @@ fun AddEditMedicineForm(
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = viewModel.state.editedDosage,
+            value = state.editedDosage,
             onValueChange = { viewModel.onDosageChange(it) },
             label = { Text("Pill Dosage (mg)") },
             placeholder = { Text("Enter pill dosage") },
@@ -74,13 +70,5 @@ fun AddEditMedicineForm(
             )
         )
     }
-
-    // Return the form data as an object
-//    return AddEditMedicineFormData(
-//        editedMedicineName,
-//        editedQuantity.toInt(),
-//        editedDosage.toDouble(),
-//        editedIsActive
-//    )
 }
 

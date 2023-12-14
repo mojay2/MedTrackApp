@@ -48,7 +48,7 @@ fun AddEditMedicineScreen(
     navController: NavController,
     medicineId: Int
 ) {
-    val addEditMedicineViewModel = viewModel(modelClass = AddEditMedicineViewModel::class.java)
+    val addEditMedicineViewModel = viewModel<AddEditMedicineViewModel>(factory = AddEditMedicineViewModelFactory(medicineId))
     val addEditMedicineState = addEditMedicineViewModel.state
 
     if (medicineId != -1) {
@@ -105,7 +105,6 @@ fun AddEditMedicineScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditMedicineForm(
-                        medicine = medicine,
                         addEditMedicineViewModel
                     )
                 }

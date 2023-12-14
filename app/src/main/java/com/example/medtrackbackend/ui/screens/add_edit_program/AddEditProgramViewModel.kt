@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.medtrackbackend.Graph
 import com.example.medtrackbackend.data.DateUtil
@@ -15,6 +16,7 @@ import com.example.medtrackbackend.data.IntakeTime
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.ui.repository.Repository
+import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
@@ -24,12 +26,29 @@ import java.util.Calendar
 import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.O)
-class AddEditProgramViewModel(
-    private val repository: Repository = Graph.repository
-) : ViewModel() {
+class AddEditProgramViewModel
+    constructor(
+    private val repository: Repository = Graph.repository,
+    private val programId:Int
+    ) : ViewModel() {
     var state by mutableStateOf(AddEditProgramState())
         private set
-
+    init {
+        if(programId != -1){
+            viewModelScope.launch {
+                repository
+                    .getProgramById(programId)
+                    .collectLatest {
+                        state = state.copy(
+                            editedProgramName = it.programName,
+                            editedWeeks = it.weeks.toString(),
+                            editedDate = it.startDate,
+                            editedNumPills = it.numPills.toString(),
+                        )
+                    }
+            }
+        }
+    }
     fun getMedicine(medicineId: Int) {
         viewModelScope.launch {
             repository.getMedicineById(medicineId).collectLatest {
@@ -219,18 +238,15 @@ class AddEditProgramViewModel(
         }
     }
 
-    fun onTimeChange(newValue:LocalTime){
-        Log.d("AddEditProgramVM", "onTimeChange called with $newValue")
-        state = state.copy(editedTime = newValue)
-    }
-
     fun validateInputs():Boolean {
         val weeksAsInt = state.editedWeeks.toIntOrNull()
         val numPillsAsInt = state.editedNumPills.toIntOrNull()
 
         if(state.editedProgramName == "" || state.editedDate == Date(0) ||
             state.editedWeeks == "" || state.editedNumPills == "" ||
-            weeksAsInt == null || numPillsAsInt == null){
+            weeksAsInt == null || numPillsAsInt == null ||
+            (state.intakeTime0 == null && state.intakeTime1 == null && state.intakeTime2 == null)
+            ){
             return false
         }
         return true
@@ -285,18 +301,14 @@ class AddEditProgramViewModel(
             }
         }
     }
-
-    fun rememberEditingInputs(){  //Broken. will fix
-        state = state.copy(
-            editedProgramName = state.editingProgram.programName,
-            editedDate = state.editingProgram.startDate,
-            editedWeeks = state.editingProgram.weeks.toString(),
-            editedNumPills = state.editingProgram.numPills.toString()
-        )
-    }
-
 }
 
+@Suppress("UNCHECKED_CAST")
+class AddEditProgramViewModelFactory(private val id:Int): ViewModelProvider.Factory{
+    override fun <T: ViewModel> create(modelClass: Class<T>): T{
+        return AddEditProgramViewModel(programId = id) as T
+    }
+}
 data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val medicine: Medicine = Medicine(999, "", 999,
         999.9, false),

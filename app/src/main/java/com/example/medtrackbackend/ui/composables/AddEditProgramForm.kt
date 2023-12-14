@@ -53,7 +53,7 @@ fun AddEditProgramForm(
     val showDatePicker = remember { mutableStateOf(false) }
     val calendarState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
     val timeInputCount = remember { mutableIntStateOf(1) }
-
+    val state = viewModel.state
     LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -64,7 +64,7 @@ fun AddEditProgramForm(
         ) {
             item {
             OutlinedTextField(
-                value = viewModel.state.editedProgramName,
+                value = state.editedProgramName,
                 onValueChange = {
                     viewModel.onNameChange(it)
                     Log.d("ProgramForm", it)
@@ -75,12 +75,12 @@ fun AddEditProgramForm(
             )
             Spacer(modifier = Modifier.height(16.dp))
             DateToTextField(
-                editedStartDate = viewModel.state.editedDate,
+                editedStartDate = state.editedDate,
                 onClick = { showDatePicker.value = true }
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = viewModel.state.editedWeeks.toString(),
+                value = state.editedWeeks,
                 onValueChange = { viewModel.onWeekChange(it) },
                 label = { Text("Number of Weeks") },
                 placeholder = { Text("Enter number of weeks") },
@@ -88,7 +88,7 @@ fun AddEditProgramForm(
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = viewModel.state.editedNumPills.toString(),
+                value = state.editedNumPills,
                 onValueChange = { viewModel.onNumPillsChange(it) },
                 label = { Text("Dosage Quantity (pill)") },
                 placeholder = { Text("Enter dosage quantity") },
@@ -108,7 +108,6 @@ fun AddEditProgramForm(
             state = calendarState,
             onDateSelected = { selectedDate ->
                 viewModel.onDateChange(DateUtil().asDate(selectedDate))
-                Log.d("Test Program Form", selectedDate.toString())
             }
         )
     }

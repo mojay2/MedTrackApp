@@ -37,6 +37,8 @@ import com.example.medtrackbackend.ui.composables.BottomNavBar
 import com.example.medtrackbackend.ui.composables.ConfirmModal
 import com.example.medtrackbackend.ui.composables.FormDetailsHeader
 import com.example.medtrackbackend.ui.composables.MedicineDetailsHeader
+import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineViewModel
+import com.example.medtrackbackend.ui.screens.add_edit_medicine.AddEditMedicineViewModelFactory
 import com.example.medtrackbackend.ui.util.LocalCustomColorsPalette
 import com.example.medtrackbackend.ui.util.PageHeaderData
 
@@ -49,21 +51,16 @@ fun AddEditProgramScreen(
     medicineId: Int,
     programId: Int
 ){
-    val addEditProgramViewModel = viewModel(modelClass = AddEditProgramViewModel::class.java)
+    val addEditProgramViewModel = viewModel<AddEditProgramViewModel>(factory = AddEditProgramViewModelFactory(programId))
     val addEditProgramState = addEditProgramViewModel.state
     val openDeleteDialog = remember { mutableStateOf(false) }
     val submitButtonText = if (programId != -1 && programId != 999)
         "Confirm Changes" else "Confirm Details"
     val pageHeader =
         if (programId != -1 && programId != 999) PageHeaderData.EDIT_PROGRAM else PageHeaderData.ADD_PROGRAM
-
     addEditProgramViewModel.getMedicine(medicineId)
-    val medicine: Medicine =  addEditProgramState.medicine
-
     if (programId != -1) {
         addEditProgramViewModel.getEditingProgram(programId)
-    //Todo: Fix these to remember inputs on edit mode
-    //        addEditProgramViewModel.rememberEditingInputs()
     }
     Scaffold(
         bottomBar = {

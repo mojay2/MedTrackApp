@@ -1,6 +1,7 @@
 package com.example.medtrackbackend.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +33,8 @@ import com.example.medtrackbackend.ui.util.PageHeaderData
 fun MedicineDetailsHeader(
     medication: Medicine,
     pageHeader: PageHeaderData,
-    hideMedicineName: Boolean = false
+    hideMedicineName: Boolean = false,
+    navController: NavController
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,14 +45,19 @@ fun MedicineDetailsHeader(
             .wrapContentHeight(align = Alignment.Top, unbounded = true)
             .padding(16.dp)
     ) {
-        BackArrowWithTitle(pageHeader)
+        BackArrowWithTitle(pageHeader){
+            navController.navigate("medicinecabinet")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         HeaderContent(medication, pageHeader, hideMedicineName)
     }
 }
 
 @Composable
-private fun BackArrowWithTitle(pageHeader: PageHeaderData) {
+private fun BackArrowWithTitle(
+    pageHeader: PageHeaderData,
+    onBackClick: () -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -58,7 +65,8 @@ private fun BackArrowWithTitle(pageHeader: PageHeaderData) {
     ) {
         Icon(
             Icons.Filled.ArrowBack,
-            contentDescription = "Arrow Back Icon"
+            contentDescription = "Arrow Back Icon",
+            modifier = Modifier.clickable(onClick = onBackClick)
         )
         HeaderText(
             titleText = pageHeader.title,

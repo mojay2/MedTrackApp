@@ -86,7 +86,8 @@ fun AddEditMedicineScreen(
                     MedicineDetailsHeader(
                         medication = medicine,
                         pageHeader = pageHeader,
-                        hideMedicineName = true
+                        hideMedicineName = true,
+                        navController = navController
                     )
                 }
                 Column(

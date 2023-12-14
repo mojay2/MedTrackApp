@@ -88,6 +88,7 @@ fun MedicineDetailsScreen(
                     MedicineDetailsHeader(
                         medication = medicineDetailsState.medicine,
                         pageHeader = PageHeaderData.MEDICINE_DETAILS,
+                        navController = navController
                     )
                 }
                 Column(

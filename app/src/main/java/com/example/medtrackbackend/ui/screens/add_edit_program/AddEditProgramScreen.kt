@@ -88,7 +88,8 @@ fun AddEditProgramScreen(
                 ) {
                     MedicineDetailsHeader(
                         pageHeader = pageHeader,
-                        medication = addEditProgramState.dummyMedicine
+                        medication = addEditProgramState.dummyMedicine,
+                        navController = navController
                     )
                 }
                 Column(

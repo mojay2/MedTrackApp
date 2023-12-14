@@ -12,9 +12,8 @@
 - [x] Separate taken medicine from upcoming
 ## Final Todo
 ### Overall Fixes
-- [ ] Back Button on headers not working
-- [ ] Route Class is mostly unused (may parameters kasi yung ibang routes so I havent tried fully implementing it yet)
-- [ ] Bottom NavBar active tab indicator not working (because route class in unused)
+- [X] Back Button on headers not working
+- [x] Bottom NavBar active tab indicator not working (because route class in unused)
 
 ### Add edit medicine screen
 - [ ] When updating, forms are not filled
@@ -28,17 +27,15 @@
 - [ ] Make snackbars/toast on success and on invalid details 
 
 ### Medicine Details Screen
-- [ ] No logic for active and inactive programs, currently, the first program found is the active one (on my prio)
-- [ ] No calculation for weeks left, and program end date.
+- [x] No logic for active and inactive programs, currently, the first program found is the active one (on my prio)
+- [x] No calculation for weeks left, and program end date.
 
 ### Medicine Cabinet Screen
-- [ ] Active Medicine functionality is not used
-- [ ] Active Status implementation
-- [ ] Add logic for active/inactive medicine
+- [x] Active Medicine functionality is not used
 
 ### Home Screen
 - [ ] Didnt use floating action button and active medicine. An embedded class
-is used to populate the home screen (yung mga inner join shit), which is hard to "set active"
+is used to populate the home screen (yung mga inner join stuff), which is hard to "set active"
 - [ ] taking med must be disabled if medicine quantity will be negative after (w/ snackbar)
 
 

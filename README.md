@@ -18,7 +18,6 @@
 ### Add edit medicine screen
 - [ ] When updating, forms are not filled
 - [x] Make snackbars/toast on success and on invalid details 
-- [ ] No logic for setting active/inactive
 
 ### Add edit program screen
 - [ ] no multiple times (nung sinubukan ko gawin, pare pareho lagi yung time for all the fields, will try
@@ -34,8 +33,6 @@
 - [x] Active Medicine functionality is not used
 
 ### Home Screen
-- [ ] Didnt use floating action button and active medicine. An embedded class
-is used to populate the home screen (yung mga inner join stuff), which is hard to "set active"
 - [ ] taking med must be disabled if medicine quantity will be negative after (w/ snackbar)
 
 

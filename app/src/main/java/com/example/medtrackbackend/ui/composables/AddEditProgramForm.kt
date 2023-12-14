@@ -2,6 +2,7 @@ package com.example.medtrackbackend.ui.composables
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,10 +22,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,18 +41,18 @@ import com.example.medtrackbackend.data.DateUtil
 import com.example.medtrackbackend.data.IntakeProgram
 import com.example.medtrackbackend.ui.screens.add_edit_program.AddEditProgramViewModel
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditProgramForm(
-    program: IntakeProgram,
     viewModel: AddEditProgramViewModel
 ){
-    var isEditing = program.id != 999 && program.id != -1
     // TODO: Maybe change these? Medyo panget itsura nung variables HAHAH. ewan ko kung me form helper sa kotlin or compose
     val showDatePicker = remember { mutableStateOf(false) }
     val calendarState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    val timeInputCount = remember { mutableIntStateOf(1) }
 
     LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,27 +95,9 @@ fun AddEditProgramForm(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-
-            val  timePickerDialog = ShowTimePicker(
-                context = LocalContext.current,
-                onTimeSelected = {
-                    viewModel.onTimeChange(it)
-                }
-            )
-            OutlinedTextField(
-                value = TextFieldValue(viewModel.state.editedTime.format(
-                    DateTimeFormatter.ofPattern("HH:mm"))),
-                onValueChange = {  },
-                label = { Text("Intake Time") },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    Icon(
-                        Icons.Outlined.AccessTime,
-                        contentDescription = "Time Icon",
-                        modifier = Modifier.clickable(onClick = { timePickerDialog.show() })
-                    )
-                },
-                readOnly = true
+            TimeItems(
+                timeInputCount = timeInputCount,
+                viewModel = viewModel
             )
         }
     }

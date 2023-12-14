@@ -108,7 +108,6 @@ fun AddEditProgramScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     AddEditProgramForm(
-                        program = addEditProgramState.editingProgram,
                         viewModel = addEditProgramViewModel
                     )
                 }

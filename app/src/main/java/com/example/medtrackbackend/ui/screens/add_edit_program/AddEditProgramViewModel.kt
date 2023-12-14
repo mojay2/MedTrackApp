@@ -47,7 +47,7 @@ class AddEditProgramViewModel(
         startDate: Date,
         weeks: Int,
         numPills: Int,
-        time: LocalTime,
+        times: List<LocalTime?>,
     ) {
         viewModelScope.launch {
             try {
@@ -60,7 +60,7 @@ class AddEditProgramViewModel(
                 )
                 val createdProgramID = repository.insertProgram(program)
                 state = state.copy(programId = createdProgramID.toInt())
-                insertIntakeTimes(createdProgramID.toInt(), startDate, weeks, time)
+                insertIntakeTimes(createdProgramID.toInt(), startDate, weeks, times)
                 updateMedicineActiveStatus(medicineId, isActive = true)
                 Log.d("AddEditProgramVM", "Program ID inserted:${createdProgramID}")
                 Log.d("AddEditProgramVM", "Program ID in State:${state.programId}")
@@ -88,7 +88,7 @@ class AddEditProgramViewModel(
         startDate: Date,
         weeks: Int,
         numPills: Int,
-        time: LocalTime,
+        times: List<LocalTime?>,
     ) {
         viewModelScope.launch {
             try {
@@ -102,7 +102,7 @@ class AddEditProgramViewModel(
                     numPills = numPills
                 )
                 repository.updateProgram(program)
-                deleteIntakeTimesFromProgramId(programId, startDate, weeks, time)
+                deleteIntakeTimesFromProgramId(programId, startDate, weeks, times)
             } catch (e: Exception) {
                 Log.e("AddEditProgramVM", "Update Program failed: ${e.message}", e)
             }
@@ -130,35 +130,38 @@ class AddEditProgramViewModel(
         state = state.copy(programList = programs)
     }
 
-    private fun deleteIntakeTimesFromProgramId(programId: Int, startDate: Date, weeks: Int, time: LocalTime){
+    private fun deleteIntakeTimesFromProgramId(programId: Int, startDate: Date, weeks: Int, times: List<LocalTime?>){
         viewModelScope.launch {
             try {
                 repository.deleteAllTimesFromProgramId(programId)
-                insertIntakeTimes(programId, startDate, weeks, time)
+                insertIntakeTimes(programId, startDate, weeks, times)
             } catch (e: Exception) {
                 Log.e("AddEditProgramVM", "Delete Program Times failed: ${e.message}", e)
             }
         }
     }
 
-    private fun insertIntakeTimes(id: Int, startDate: Date, weeks: Int, time: LocalTime) {
+    private fun insertIntakeTimes(id: Int, startDate: Date, weeks: Int, times: List<LocalTime?>) {
         val intakeDates = generateIntakeDates(startDate, weeks)
         Log.d("AddEditProgramVM", "Program ID in Insert Time:${state.programId}")
         viewModelScope.launch {
-            intakeDates.forEach { intakeDate ->
-                try {
-                    repository.insertTime(
-                        IntakeTime(
-                            programIdFk = id,
-                            time = time,
-                            intakeDate = intakeDate,
-                            status = Status.UPCOMING
-                        )
-                    )
-                    Log.e("AddEditProgramVM", "Time Inserted:${time}")
-
-                } catch (e: Exception) {
-                    Log.e("AddEditProgramVM", "Insert Intake Time failed: ${e.message}", e)
+            times.forEach{ time ->
+                if(time != null){
+                    intakeDates.forEach { intakeDate ->
+                        try {
+                            repository.insertTime(
+                                IntakeTime(
+                                    programIdFk = id,
+                                    time = time,
+                                    intakeDate = intakeDate,
+                                    status = Status.UPCOMING
+                                )
+                            )
+                            Log.e("AddEditProgramVM", "Time Inserted:${time}")
+                        } catch (e: Exception) {
+                            Log.e("AddEditProgramVM", "Insert Intake Time failed: ${e.message}", e)
+                        }
+                    }
                 }
             }
         }
@@ -234,6 +237,7 @@ class AddEditProgramViewModel(
     }
 
     fun insertStateInputs():Boolean{
+        var intakeTimes = listOf(state.intakeTime0, state.intakeTime1, state.intakeTime2)
         return try {
             if(state.editingProgram.id == 999){
                 insertProgram(
@@ -242,7 +246,7 @@ class AddEditProgramViewModel(
                     state.editedDate,
                     state.editedWeeks.toInt(),
                     state.editedNumPills.toInt(),
-                    state.editedTime
+                    intakeTimes
                 )
             } else {
                 updateProgram(
@@ -252,13 +256,33 @@ class AddEditProgramViewModel(
                     state.editedDate,
                     state.editedWeeks.toInt(),
                     state.editedNumPills.toInt(),
-                    state.editedTime
+                    intakeTimes
                 )
             }
             true
         } catch(e: Exception) {
             Log.d("AddEditProgramVM", "Error Calling Insert Function")
             false
+        }
+    }
+
+    fun onIntakeTimeChange(time: LocalTime?, index: Int){
+        state = when (index) {
+            0 -> {
+                state.copy(
+                    intakeTime0 = time
+                )
+            }
+            1 -> {
+                state.copy(
+                    intakeTime1 = time
+                )
+            }
+            else -> {
+                state.copy(
+                    intakeTime2 = time
+                )
+            }
         }
     }
 
@@ -286,5 +310,8 @@ data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val editedWeeks: String = "",
     val editedNumPills: String = "",
     val editedTime: LocalTime = LocalTime.now().withSecond(0),
-    val programList: List<IntakeProgram> = emptyList()
+    val programList: List<IntakeProgram> = emptyList(),
+    val intakeTime0: LocalTime? = null,
+    val intakeTime1: LocalTime? = null,
+    val intakeTime2: LocalTime? = null,
 )

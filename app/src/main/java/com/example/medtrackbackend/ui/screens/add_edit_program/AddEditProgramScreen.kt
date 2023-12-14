@@ -2,6 +2,7 @@ package com.example.medtrackbackend.ui.screens.add_edit_program
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -71,7 +73,8 @@ fun AddEditProgramScreen(
             AddEditProgramFloatingActionButton(
                 submitButtonText,
                 addEditProgramViewModel,
-                navController
+                navController,
+                programId
             )
         }
     ) { innerPadding ->
@@ -142,7 +145,8 @@ fun AddEditProgramScreen(
 fun AddEditProgramFloatingActionButton(
     submitButtonText: String,
     viewModel: AddEditProgramViewModel,
-    navController: NavController
+    navController: NavController,
+    programId: Int
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -151,6 +155,12 @@ fun AddEditProgramFloatingActionButton(
             .padding(start = 32.dp)
             .fillMaxWidth()
     ) {
+        val toastSuccessText = if (programId != -1 && programId != 999)
+            "Program was updated successfully" else "Program was inserted successfully"
+        val toastInvalidText = if (programId != -1 && programId != 999)
+            "Program was not updated" else "Program was not inserted"
+        val context = LocalContext.current
+
         ExtendedFloatingActionButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -160,8 +170,10 @@ fun AddEditProgramFloatingActionButton(
                 if (viewModel.validateInputs() && viewModel.insertStateInputs()) {
                     navController.navigate(
                         "MedicineDetails/${viewModel.state.medicine.id}")
+                    Toast.makeText(context, toastSuccessText, Toast.LENGTH_SHORT).show()
                 }else{
-                        //Todo Add Prompt here for invalid inputs
+                    //Todo Add Prompt here for invalid inputs
+                    Toast.makeText(context, toastInvalidText, Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier

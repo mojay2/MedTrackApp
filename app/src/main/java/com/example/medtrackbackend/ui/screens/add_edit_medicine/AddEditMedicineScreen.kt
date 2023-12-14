@@ -1,6 +1,7 @@
 package com.example.medtrackbackend.ui.screens.add_edit_medicine
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -67,8 +69,8 @@ fun AddEditMedicineScreen(
             AddEditMedicineFloatingActionButton(
                 submitButtonText,
                 addEditMedicineViewModel,
-                medicine,
                 navController,
+                medicineId,
                 )
         }
     ) { innerPadding ->
@@ -138,8 +140,8 @@ fun AddEditMedicineScreen(
 fun AddEditMedicineFloatingActionButton(
     submitButtonText: String,
     viewModel: AddEditMedicineViewModel,
-    medicine: Medicine,
-    navController: NavController
+    navController: NavController,
+    medicineId: Int
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -148,6 +150,12 @@ fun AddEditMedicineFloatingActionButton(
             .padding(start = 32.dp)
             .fillMaxWidth()
     ) {
+        val toastSuccessText = if (medicineId != -1 && medicineId != 999)
+            "Medicine was updated successfully" else "Medicine was inserted successfully"
+        val toastInvalidText = if (medicineId != -1 && medicineId != 999)
+            "Medicine was not updated" else "Medicine was not inserted"
+        val context = LocalContext.current
+
         ExtendedFloatingActionButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -156,8 +164,10 @@ fun AddEditMedicineFloatingActionButton(
             onClick = {
                 if (viewModel.validateInputs() && viewModel.insertStateInputs()) {
                     navController.navigate("medicinecabinet")
+                    Toast.makeText(context, toastSuccessText, Toast.LENGTH_SHORT).show()
                 } else {
                     // Todo: Add prompt for invalid inputs
+                    Toast.makeText(context, toastInvalidText, Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier

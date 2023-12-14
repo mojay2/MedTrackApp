@@ -1,9 +1,6 @@
 package com.example.medtrackbackend.ui.screens.add_edit_medicine
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,14 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,22 +24,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.ui.composables.AddEditMedicineForm
 import com.example.medtrackbackend.ui.composables.BottomNavBar
 import com.example.medtrackbackend.ui.composables.ConfirmModal
-import com.example.medtrackbackend.ui.composables.CreateMedicineCard
 import com.example.medtrackbackend.ui.composables.FormDetailsHeader
 import com.example.medtrackbackend.ui.composables.MedicineDetailsHeader
-import com.example.medtrackbackend.ui.util.AddEditMedicineFormData
 import com.example.medtrackbackend.ui.util.LocalCustomColorsPalette
 import com.example.medtrackbackend.ui.util.PageHeaderData
 import java.text.SimpleDateFormat
@@ -69,7 +56,8 @@ fun AddEditMedicineScreen(
     val openDeleteDialog = remember { mutableStateOf(false) }
     val submitButtonText = if (medicine.id != 999) "Confirm Changes" else "Confirm Details"
     val pageHeader =
-        if (medicine.id != 999) PageHeaderData.EDIT_MEDICINE_DETAILS else PageHeaderData.ADD_MEDICINE_DETAILS
+        if (medicine.id != 999) PageHeaderData.EDIT_MEDICINE_DETAILS
+        else PageHeaderData.ADD_MEDICINE_DETAILS
 
     Scaffold(
         bottomBar = {

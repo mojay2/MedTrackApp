@@ -13,8 +13,6 @@ import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Date
 
 class AddEditMedicineViewModel(
     private val repository: Repository = Graph.repository
@@ -159,9 +157,6 @@ class AddEditMedicineViewModel(
 
 data class AddEditMedicineState(
     val medicine: List<Medicine> = emptyList(),
-    val medicinePrograms: List<IntakeProgram> = emptyList(),
-    val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
-    val intakeTimeChecked : Boolean = false,
     val programs: List<IntakeProgram> = emptyList(),
     val selectedMedicine : Medicine = Medicine(999, "", 999,
         999.9, false),

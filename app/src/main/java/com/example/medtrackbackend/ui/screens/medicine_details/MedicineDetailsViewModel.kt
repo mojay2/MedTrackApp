@@ -47,8 +47,6 @@ class MedicineDetailsViewModel(
 data class MedicineDetailsState(
     val medicine: Medicine = Medicine(999,"",999, 999.9, false),
     val medicinePrograms: List<IntakeProgram> = emptyList(),
-    val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
-    val intakeTimeChecked : Boolean = false,
     val dummyProgram: IntakeProgram = IntakeProgram(999, 999, "",
         Date(0), 999, 999)
 )

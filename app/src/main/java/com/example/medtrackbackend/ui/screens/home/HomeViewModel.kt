@@ -92,13 +92,5 @@ class HomeViewModel(
 }
 
 data class HomeState(
-    val medicine: List<Medicine> = emptyList(),
-    val medicinePrograms: List<IntakeProgram> = emptyList(),
     val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
-    val intakeTimeChecked : Boolean = false,
-    val programs: List<IntakeProgram> = emptyList(),
-    val dummyMedicine: Medicine = Medicine(999, "", 999,
-        999.9, false),
-    val activeMedicine: Medicine = Medicine(999, "", 999,
-        999.9, false)
 )

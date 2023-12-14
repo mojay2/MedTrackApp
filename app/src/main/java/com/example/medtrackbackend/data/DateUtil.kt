@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
@@ -30,6 +31,13 @@ class DateUtil {
     @RequiresApi(Build.VERSION_CODES.O)
     fun asLocalDateTime(date: Date): LocalDateTime {
         return Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun resetTimeToMidnight(date: Date): Date {
+        val localDate = asLocalDate(date)
+        val localDateTime = LocalDateTime.of(localDate, LocalTime.MIDNIGHT)
+        return asDate(localDateTime)
     }
 
     fun formatDateMMDDYYYY(date: Date): String {

@@ -2,7 +2,6 @@ package com.example.medtrackbackend.ui.screens.add_edit_program
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -25,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,17 +33,10 @@ import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.ui.composables.AddEditProgramForm
 import com.example.medtrackbackend.ui.composables.BottomNavBar
 import com.example.medtrackbackend.ui.composables.ConfirmModal
-import com.example.medtrackbackend.ui.composables.CreateProgramCard
 import com.example.medtrackbackend.ui.composables.FormDetailsHeader
 import com.example.medtrackbackend.ui.composables.MedicineDetailsHeader
-import com.example.medtrackbackend.ui.util.AddEditMedicineFormData
-import com.example.medtrackbackend.ui.util.AddEditProgramFormData
 import com.example.medtrackbackend.ui.util.LocalCustomColorsPalette
 import com.example.medtrackbackend.ui.util.PageHeaderData
-import java.text.SimpleDateFormat
-import java.time.LocalTime
-import java.util.Date
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,9 +63,6 @@ fun AddEditProgramScreen(
     //Todo: Fix these to remember inputs on edit mode
     //        addEditProgramViewModel.rememberEditingInputs()
     }
-
-    Log.d("AddEditProgramScreen", "Medicine Id in add program screen: ${medicine.id}")
-
     Scaffold(
         bottomBar = {
             BottomNavBar(navController)
@@ -158,7 +144,6 @@ fun AddEditProgramFloatingActionButton(
     viewModel: AddEditProgramViewModel,
     navController: NavController
 ) {
-    val state = viewModel.state
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -172,17 +157,11 @@ fun AddEditProgramFloatingActionButton(
             text = { Text(text = submitButtonText) },
             icon = { Icon(Icons.Outlined.Check, "Check Icon") },
             onClick = {
-                Log.d("Test State Check", state.editedDate .toString())
-                val inputValid = viewModel.validateInputs()
-                Log.d("Test State Check", inputValid.toString())
-                if(inputValid){
-                    val inputSuccess = viewModel.insertStateInputs()
-                    if(inputSuccess)
-                        navController.navigate(
-                            "MedicineDetails/${viewModel.state.medicine.id}"
-                        )
-                } else {
-                    //Todo Add Prompt here for invalid inputs
+                if (viewModel.validateInputs() && viewModel.insertStateInputs()) {
+                    navController.navigate(
+                        "MedicineDetails/${viewModel.state.medicine.id}")
+                }else{
+                        //Todo Add Prompt here for invalid inputs
                 }
             },
             modifier = Modifier

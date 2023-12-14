@@ -29,8 +29,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
 
-            NavControllerProvider.initialize(navController)
-
             MedTrackBackendTheme {
                 // A surface container using the 'background' color from the theme
                 NavHost(navController = navController, startDestination = "Home") {

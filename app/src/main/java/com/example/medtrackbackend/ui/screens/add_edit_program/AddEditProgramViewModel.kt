@@ -9,19 +9,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.medtrackbackend.Graph
+import com.example.medtrackbackend.data.DateUtil
 import com.example.medtrackbackend.data.IntakeProgram
 import com.example.medtrackbackend.data.IntakeTime
-import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
-import com.example.medtrackbackend.ui.composables.toLocalDateTime
 import com.example.medtrackbackend.ui.repository.Repository
-import com.example.medtrackbackend.ui.util.AddEditProgramFormData
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
@@ -171,19 +166,6 @@ class AddEditProgramViewModel(
         }
     }
 
-    fun setFormData(formData: AddEditProgramFormData){
-        state = state.copy(
-            formData = formData
-        )
-    }
-
-    fun resetFormData(){
-        state = state.copy(
-            formData = AddEditProgramFormData("", Date(0), 999
-                , 999, LocalTime.now())
-        )
-    }
-
     fun onNameChange(newValue:String){
         Log.d("AddEditProgramVM", "onNameChange called with $newValue")
         state = state.copy(editedProgramName = newValue)
@@ -258,7 +240,7 @@ class AddEditProgramViewModel(
         }
     }
 
-    fun rememberEditingInputs(){
+    fun rememberEditingInputs(){  //Broken. will fix
         state = state.copy(
             editedProgramName = state.editingProgram.programName,
             editedDate = state.editingProgram.startDate,
@@ -272,23 +254,14 @@ class AddEditProgramViewModel(
 data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val medicine: Medicine = Medicine(999, "", 999,
         999.9, false),
-    val medicinePrograms: List<IntakeProgram> = emptyList(),
-    val intakeTimes: List<IntakeTimesWithProgramAndMedicine> = emptyList(),
-    val intakeTimeChecked: Boolean = false,
-    val programs: List<IntakeProgram> = emptyList(),
-    val timeList: List<IntakeTime> = emptyList(),
-    val latestProgram: IntakeProgram = IntakeProgram(-1, 999, "",
-        Date(0),999, 999),
     val programId: Int = -1,
     val editingProgram: IntakeProgram = IntakeProgram(999,999,"", Date(0)
         ,999, 999),
     val dummyMedicine: Medicine = Medicine(999, "", 999,
         999.9, false),
-    val formData: AddEditProgramFormData = AddEditProgramFormData("", Date(0), 0
-        , 0, LocalTime.now()),
     val editedProgramName: String = "",
-    val editedDate: Date = Date(),
+    val editedDate: Date = DateUtil().resetTimeToMidnight(Date()),
     val editedWeeks: String = "",
     val editedNumPills: String = "",
-    val editedTime: LocalTime = LocalTime.now()
+    val editedTime: LocalTime = LocalTime.now().withSecond(0)
 )

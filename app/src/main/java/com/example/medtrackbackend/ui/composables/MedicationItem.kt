@@ -22,7 +22,6 @@ fun MedicationItem(
     isActive: Boolean = false,
     isCabinet: Boolean = false,
     onClick: () -> Unit,
-    navController: NavController
 ) {
     val containerColor = when {
         isComplete && !isCabinet -> MaterialTheme.colorScheme.surfaceColorAtElevation(
@@ -40,9 +39,7 @@ fun MedicationItem(
     }
 
     val hasOnClick = if (!isComplete) onClick else {
-        {
-
-        }
+        {}
     }
 
     InfoCardExtended(

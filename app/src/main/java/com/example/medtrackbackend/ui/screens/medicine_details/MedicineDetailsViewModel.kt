@@ -42,11 +42,19 @@ class MedicineDetailsViewModel(
         }
     }
 
+    fun setActiveProgram(program: IntakeProgram){
+        state = state.copy(
+            activeProgram = program
+        )
+    }
+
 }
 
 data class MedicineDetailsState(
     val medicine: Medicine = Medicine(999,"",999, 999.9, false),
     val medicinePrograms: List<IntakeProgram> = emptyList(),
     val dummyProgram: IntakeProgram = IntakeProgram(999, 999, "",
+        Date(0), 999, 999),
+    val activeProgram: IntakeProgram = IntakeProgram(999, 999, "",
         Date(0), 999, 999)
 )

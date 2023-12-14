@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 
@@ -43,5 +44,18 @@ class DateUtil {
     fun formatDateMMDDYYYY(date: Date): String {
         val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
         return dateFormat.format(date)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun calculateEndDate(startDate: Date, weeks: Int): Date {
+        val localStartDate = asLocalDate(startDate)
+        val endDate = localStartDate.plusWeeks(weeks.toLong())
+        return asDate(endDate)
+    }
+    
+    fun calculateDaysUntilEndDate(endDate: Date): Int {
+        val today = LocalDate.now()
+        val localEndDate = asLocalDate(endDate)
+        return today.until(localEndDate, ChronoUnit.DAYS).toInt()
     }
 }

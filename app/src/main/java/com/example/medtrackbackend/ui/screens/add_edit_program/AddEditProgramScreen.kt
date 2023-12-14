@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,8 +71,10 @@ fun AddEditProgramScreen(
 
     if (programId != -1) {
         addEditProgramViewModel.getEditingProgram(programId)
+    //Todo: Fix these to remember inputs on edit mode
+    //        addEditProgramViewModel.rememberEditingInputs()
     }
-    var formData: AddEditProgramFormData
+
     Log.d("AddEditProgramScreen", "Medicine Id in add program screen: ${medicine.id}")
 
     Scaffold(
@@ -81,7 +84,8 @@ fun AddEditProgramScreen(
         floatingActionButton = {
             AddEditProgramFloatingActionButton(
                 submitButtonText,
-                addEditProgramViewModel
+                addEditProgramViewModel,
+                navController
             )
         }
     ) { innerPadding ->
@@ -117,35 +121,8 @@ fun AddEditProgramScreen(
                         program = addEditProgramState.editingProgram,
                         viewModel = addEditProgramViewModel
                     )
-//                    addEditProgramViewModel.setFormData(formData)
                 }
             }
-            LazyColumn {
-                item {
-                    CreateProgramCard(
-                        medicine,
-                        programId,
-                        onAddProgram = { medicineId, programName, startDate, weeks, numPills, time ->
-                            addEditProgramViewModel.insertProgram(
-                                medicineId, programName, startDate,
-                                weeks, numPills, time
-                            )
-                        },
-                        onEditProgram = { medicineId, programId, programName, startDate, weeks, numPills, time ->
-                            addEditProgramViewModel.updateProgram(
-                                medicineId, programId, programName, startDate,
-                                weeks, numPills, time
-                            )
-                        }
-                    )
-                }
-                item {
-                    Button(onClick = { navController.navigate("MedicineDetails/${medicine.id}") }) {
-                        Text("Back")
-                    }
-                }
-            }
-
         }
 
         if (openDeleteDialog.value && (programId != -1)) {
@@ -178,9 +155,10 @@ fun AddEditProgramScreen(
 @Composable
 fun AddEditProgramFloatingActionButton(
     submitButtonText: String,
-    addEditProgramViewModel: AddEditProgramViewModel
+    viewModel: AddEditProgramViewModel,
+    navController: NavController
 ) {
-    val state = addEditProgramViewModel.state
+    val state = viewModel.state
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -194,7 +172,18 @@ fun AddEditProgramFloatingActionButton(
             text = { Text(text = submitButtonText) },
             icon = { Icon(Icons.Outlined.Check, "Check Icon") },
             onClick = {
-              Log.d("Test State Check", state.formData.toString())
+                Log.d("Test State Check", state.editedDate .toString())
+                val inputValid = viewModel.validateInputs()
+                Log.d("Test State Check", inputValid.toString())
+                if(inputValid){
+                    val inputSuccess = viewModel.insertStateInputs()
+                    if(inputSuccess)
+                        navController.navigate(
+                            "MedicineDetails/${viewModel.state.medicine.id}"
+                        )
+                } else {
+                    //Todo Add Prompt here for invalid inputs
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

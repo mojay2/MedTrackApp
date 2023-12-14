@@ -61,61 +61,47 @@ fun AddEditProgramForm(
     program: IntakeProgram,
     viewModel: AddEditProgramViewModel
 ){
-
     var isEditing = program.id != 999 && program.id != -1
-
     // TODO: Maybe change these? Medyo panget itsura nung variables HAHAH. ewan ko kung me form helper sa kotlin or compose
-    var editedProgramName by remember { mutableStateOf(if(isEditing) program.programName else "") }
-    var editedWeeks by remember { mutableStateOf(if(isEditing) program.weeks.toString() else "") }
-    var editedDosageQuantity by remember { mutableStateOf(if(isEditing) program.numPills.toString() else "") }
-    var editedStartDate by remember {
-        mutableStateOf(DateUtil().asDate(LocalDate.now()))
-    }
     val showDatePicker = remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
-
     val calendarState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
-    val timeState = rememberTimePickerState()
-    val timeInputCount = remember { mutableIntStateOf(1) }
-    val context = LocalContext.current
-
-    var intakeTime by rememberSaveable {
-        mutableStateOf(LocalTime.now(ZoneId.systemDefault()))
-    }
 
     LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-        item {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            item {
             OutlinedTextField(
-                value = editedProgramName,
-                onValueChange = { editedProgramName = it },
+                value = viewModel.state.editedProgramName,
+                onValueChange = {
+                    viewModel.onNameChange(it)
+                    Log.d("ProgramForm", it)
+                },
                 label = { Text("Program Name") },
                 placeholder = { Text("Enter program name") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             DateToTextField(
-                editedStartDate = editedStartDate,
+                editedStartDate = viewModel.state.editedDate,
                 onClick = { showDatePicker.value = true }
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = editedWeeks,
-                onValueChange = { editedWeeks = it },
+                value = viewModel.state.editedWeeks.toString(),
+                onValueChange = { viewModel.onWeekChange(it) },
                 label = { Text("Number of Weeks") },
                 placeholder = { Text("Enter number of weeks") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = editedDosageQuantity,
-                onValueChange = { editedDosageQuantity = it },
+                value = viewModel.state.editedNumPills.toString(),
+                onValueChange = { viewModel.onNumPillsChange(it) },
                 label = { Text("Dosage Quantity (pill)") },
                 placeholder = { Text("Enter dosage quantity") },
                 modifier = Modifier.fillMaxWidth()
@@ -125,13 +111,12 @@ fun AddEditProgramForm(
             val  timePickerDialog = ShowTimePicker(
                 context = LocalContext.current,
                 onTimeSelected = {
-                    intakeTime = it
+                    viewModel.onTimeChange(it)
                 }
             )
-
-//            TODO: ADD MULTIPLE TIME INPUTS
             OutlinedTextField(
-                value = TextFieldValue(intakeTime.format(DateTimeFormatter.ofPattern("HH:mm"))),
+                value = TextFieldValue(viewModel.state.editedTime.format(
+                    DateTimeFormatter.ofPattern("HH:mm"))),
                 onValueChange = {  },
                 label = { Text("Intake Time") },
                 modifier = Modifier.fillMaxWidth(),
@@ -144,12 +129,6 @@ fun AddEditProgramForm(
                 },
                 readOnly = true
             )
-//            TimeItem(
-//                timeInputCount = timeInputCount,
-//                timeState = timeState,
-//                onClickTime = { showTimePicker = true
-//                }
-//            )
         }
     }
 
@@ -158,45 +137,11 @@ fun AddEditProgramForm(
             openDialog = showDatePicker,
             state = calendarState,
             onDateSelected = { selectedDate ->
-                editedStartDate = DateUtil().asDate(selectedDate)
-                Log.d("Test Program Form", editedStartDate.toString())
+                viewModel.onDateChange(DateUtil().asDate(selectedDate))
+                Log.d("Test Program Form", selectedDate.toString())
             }
         )
     }
-
-    if (showTimePicker) {
-        TimePickerDialog(
-            onCancel = { showTimePicker = false },
-            onConfirm = {
-                val cal = Calendar.getInstance()
-                cal.set(Calendar.HOUR_OF_DAY, timeState.hour)
-                cal.set(Calendar.MINUTE, timeState.minute)
-                cal.isLenient = false
-                showTimePicker = false
-                Toast.makeText(
-                    context, "Entered time: ${cal.time}", Toast.LENGTH_SHORT
-                ).show()
-            },
-        ) {
-            TimeInput(state = timeState)
-        }
-    }
-
-//    var formData = AddEditProgramFormData(
-//        editedProgramName,
-//        editedStartDate,
-//        editedWeeks.toInt(),
-//        editedDosageQuantity.toInt(),
-//        intakeTime
-//    )
-//    viewModel.setFormData(formData)
-
-//    return AddEditProgramFormData(
-//        editedProgramName,
-//        editedStartDate,
-//        editedWeeks.toInt(),
-//        editedDosageQuantity.toInt(),
-//        intakeTime
-//    )
 }
+
 

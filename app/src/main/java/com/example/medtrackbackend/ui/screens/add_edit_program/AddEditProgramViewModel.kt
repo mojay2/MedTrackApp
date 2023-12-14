@@ -43,27 +43,6 @@ class AddEditProgramViewModel(
         }
     }
 
-//    fun getLatestProgram() {
-//        viewModelScope.launch {
-//            val latestProgram = repository.latestProgram.firstOrNull()
-//            if (latestProgram != null) {
-//                state = state.copy(latestProgram = latestProgram)
-//            } else {
-//                // Handle the error here
-//            }
-//        }
-//    }
-//
-//    private fun getAllPrograms(){
-//        viewModelScope.launch {
-//            repository.allPrograms.collectLatest {
-//                state = state.copy(
-//                    programs = it
-//                )
-//            }
-//        }
-//    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun insertProgram(
         medicineId: Int,
@@ -127,10 +106,6 @@ class AddEditProgramViewModel(
         viewModelScope.launch{
             try{
                 repository.deleteProgramFromId(programId)
-//                state = state.copy(
-//                    editingProgram = IntakeProgram(999,999,"", Date(0)
-//                        ,999, 999)
-//                )
                 Log.e("AddEditProgramVM", "Deleted Program Successfully")
             } catch(e: Exception) {
                 Log.e("AddEditProgramVM", "Delete Program failed: ${e.message}", e)
@@ -208,6 +183,90 @@ class AddEditProgramViewModel(
                 , 999, LocalTime.now())
         )
     }
+
+    fun onNameChange(newValue:String){
+        Log.d("AddEditProgramVM", "onNameChange called with $newValue")
+        state = state.copy(editedProgramName = newValue)
+    }
+
+    fun onDateChange(newValue:Date){
+        Log.d("AddEditProgramVM", "onDateChange called with $newValue")
+        state = state.copy(editedDate = newValue)
+    }
+
+    fun onWeekChange(newValue:String){
+        Log.d("AddEditProgramVM", "onWeekChange called with $newValue")
+        try {
+            state = state.copy(editedWeeks = newValue)
+        } catch (e: NumberFormatException) {
+            Log.e("AddEditProgramVM", "Error Updating Weeks: ${e.message}", e)
+        }
+    }
+
+    fun onNumPillsChange(newValue:String){
+        Log.d("AddEditProgramVM", "onNumPillsChanged called with $newValue")
+        try {
+            state = state.copy(editedNumPills = newValue)
+        } catch (e: NumberFormatException) {
+            Log.e("AddEditProgramVM", "Error Updating Num Pills: ${e.message}", e)
+        }
+    }
+
+    fun onTimeChange(newValue:LocalTime){
+        Log.d("AddEditProgramVM", "onTimeChange called with $newValue")
+        state = state.copy(editedTime = newValue)
+    }
+
+    fun validateInputs():Boolean {
+        val weeksAsInt = state.editedWeeks.toIntOrNull()
+        val numPillsAsInt = state.editedNumPills.toIntOrNull()
+
+        if(state.editedProgramName == "" || state.editedDate == Date(0) ||
+            state.editedWeeks == "" || state.editedNumPills == "" ||
+            weeksAsInt == null || numPillsAsInt == null){
+            return false
+        }
+        return true
+    }
+
+    fun insertStateInputs():Boolean{
+        return try {
+            if(state.editingProgram.id == 999){
+                insertProgram(
+                    state.medicine.id,
+                    state.editedProgramName,
+                    state.editedDate,
+                    state.editedWeeks.toInt(),
+                    state.editedNumPills.toInt(),
+                    state.editedTime
+                )
+            } else {
+                updateProgram(
+                    state.medicine.id,
+                    state.editingProgram.id,
+                    state.editedProgramName,
+                    state.editedDate,
+                    state.editedWeeks.toInt(),
+                    state.editedNumPills.toInt(),
+                    state.editedTime
+                )
+            }
+            true
+        } catch(e: Exception) {
+            Log.d("AddEditProgramVM", "Error Calling Insert Function")
+            false
+        }
+    }
+
+    fun rememberEditingInputs(){
+        state = state.copy(
+            editedProgramName = state.editingProgram.programName,
+            editedDate = state.editingProgram.startDate,
+            editedWeeks = state.editingProgram.weeks.toString(),
+            editedNumPills = state.editingProgram.numPills.toString()
+        )
+    }
+
 }
 
 data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
@@ -225,6 +284,11 @@ data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
         ,999, 999),
     val dummyMedicine: Medicine = Medicine(999, "", 999,
         999.9, false),
-    val formData: AddEditProgramFormData = AddEditProgramFormData("", Date(0), 999
-        , 999, LocalTime.now())
+    val formData: AddEditProgramFormData = AddEditProgramFormData("", Date(0), 0
+        , 0, LocalTime.now()),
+    val editedProgramName: String = "",
+    val editedDate: Date = Date(),
+    val editedWeeks: String = "",
+    val editedNumPills: String = "",
+    val editedTime: LocalTime = LocalTime.now()
 )

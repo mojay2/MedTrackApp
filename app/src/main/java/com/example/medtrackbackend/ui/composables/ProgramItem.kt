@@ -17,7 +17,8 @@ fun ProgramItem(
     val containerColor =
         if (isActive) MaterialTheme.colorScheme.secondaryContainer
         else MaterialTheme.colorScheme.surface
-
+    val endDate = dateUtil.calculateEndDate(program.startDate, program.weeks)
+    val daysLeft = dateUtil.calculateDaysUntilEndDate(endDate)
     InfoCardExtended(
         infoTopLeft = {
             Text(
@@ -30,14 +31,15 @@ fun ProgramItem(
         },
         infoTopRight = {
             Text(
-                text = "${dateUtil.formatDateMMDDYYYY(program.startDate)}",
+                text = "${dateUtil.formatDateMMDDYYYY(program.startDate)} - " +
+                        "${dateUtil.formatDateMMDDYYYY(endDate)}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.secondary
             )
         },
         infoBottomLeft = {
             Text(
-                text = "${program.weeks} weeks | _ weeks left",
+                text = "${program.weeks} weeks | $daysLeft days left",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary
             )

@@ -16,6 +16,8 @@ import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.ui.repository.Repository
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.util.Calendar
@@ -49,7 +51,6 @@ class AddEditProgramViewModel(
     ) {
         viewModelScope.launch {
             try {
-                // Insert the program
                 val program = IntakeProgram(
                     medIdFk = medicineId,
                     programName = programName,
@@ -60,10 +61,21 @@ class AddEditProgramViewModel(
                 val createdProgramID = repository.insertProgram(program)
                 state = state.copy(programId = createdProgramID.toInt())
                 insertIntakeTimes(createdProgramID.toInt(), startDate, weeks, time)
+                updateMedicineActiveStatus(medicineId, isActive = true)
                 Log.d("AddEditProgramVM", "Program ID inserted:${createdProgramID}")
                 Log.d("AddEditProgramVM", "Program ID in State:${state.programId}")
             } catch (e: Exception) {
                 Log.e("AddEditProgramVM", "Insert Program failed: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun updateMedicineActiveStatus(id: Int, isActive: Boolean){
+        viewModelScope.launch {
+            try {
+                repository.updateMedicineStatus(id, isActive)
+            } catch (e: Exception){
+                Log.e("AddEditProgramVM", "Update Med Status Failed: ${e.message}", e)
             }
         }
     }
@@ -102,10 +114,20 @@ class AddEditProgramViewModel(
             try{
                 repository.deleteProgramFromId(programId)
                 Log.e("AddEditProgramVM", "Deleted Program Successfully")
+
+                getIntakeProgramsForMedicine(state.medicine)
+                if(state.programList.isEmpty()){
+                    updateMedicineActiveStatus(state.medicine.id, isActive = false)
+                }
             } catch(e: Exception) {
                 Log.e("AddEditProgramVM", "Delete Program failed: ${e.message}", e)
             }
         }
+    }
+
+    private suspend fun getIntakeProgramsForMedicine(medicine: Medicine) {
+        val programs = repository.getProgramsFromMedicine(medicine.id).first()
+        state = state.copy(programList = programs)
     }
 
     private fun deleteIntakeTimesFromProgramId(programId: Int, startDate: Date, weeks: Int, time: LocalTime){
@@ -263,5 +285,6 @@ data class AddEditProgramState @RequiresApi(Build.VERSION_CODES.O) constructor(
     val editedDate: Date = DateUtil().resetTimeToMidnight(Date()),
     val editedWeeks: String = "",
     val editedNumPills: String = "",
-    val editedTime: LocalTime = LocalTime.now().withSecond(0)
+    val editedTime: LocalTime = LocalTime.now().withSecond(0),
+    val programList: List<IntakeProgram> = emptyList()
 )

@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.medtrackbackend.R
 import com.example.medtrackbackend.data.Medicine
 
@@ -38,9 +37,9 @@ fun MedicationItem(
         MaterialTheme.colorScheme.primary
     }
 
-    val hasOnClick = if (!isComplete) onClick else {
-        {}
-    }
+//    val hasOnClick = if (!isComplete) onClick else {
+//        {}
+//    }
 
     InfoCardExtended(
         infoTopLeft = {
@@ -80,6 +79,6 @@ fun MedicationItem(
         containerColor = containerColor,
         icon = R.drawable.capsule,
         iconColor = capsuleColor,
-        onClick = hasOnClick
+        onClick = onClick
     )
 }

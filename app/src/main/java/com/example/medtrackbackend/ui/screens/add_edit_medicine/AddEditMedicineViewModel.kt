@@ -52,13 +52,13 @@ class AddEditMedicineViewModel(
                     medicineName = medicineName,
                     quantity = qty,
                     dosage = dosage,
-                    isActive = true
+                    isActive = false
                 )
             )
         }
     }
 
-    private fun updateMedicine(id: Int, medicineName: String, qty: Int, dosage:Double){
+    private fun updateMedicine(id: Int, medicineName: String, qty: Int, dosage:Double, isActive:Boolean){
         viewModelScope.launch {
             repository.updateMedicine(
                 Medicine(
@@ -66,7 +66,7 @@ class AddEditMedicineViewModel(
                     medicineName = medicineName,
                     quantity = qty,
                     dosage = dosage,
-                    isActive = true
+                    isActive = isActive
                 )
             )
         }
@@ -142,7 +142,8 @@ class AddEditMedicineViewModel(
                     state.selectedMedicine.id,
                     state.editedName,
                     state.editedQty.toInt(),
-                    state.editedDosage.toDouble()
+                    state.editedDosage.toDouble(),
+                    state.selectedMedicine.isActive
                 )
             }
 

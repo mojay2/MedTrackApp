@@ -46,11 +46,19 @@ class MedicineCabinetViewModel(
             }
         }
     }
+
+    fun setActiveMedicine(medicine: Medicine){
+        state = state.copy(
+            activeMedicine = medicine
+        )
+    }
 }
 
 data class MedicineCabinetState(
     val medicine: List<Medicine> = emptyList(),
     val programs: List<IntakeProgram> = emptyList(),
     val dummyMedicine: Medicine = Medicine(999, "", 999,
+        999.9, false),
+    val activeMedicine: Medicine = Medicine(999, "", 999,
         999.9, false)
 )

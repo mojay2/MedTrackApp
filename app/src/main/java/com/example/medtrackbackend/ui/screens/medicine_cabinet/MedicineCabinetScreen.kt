@@ -69,8 +69,8 @@ fun MedicineCabinetScreen(
         },
         floatingActionButton = {
             MedicineCabinetFloatingActionButton(
-                medicineCabinetState.dummyMedicine,
-                navController
+                navController,
+                medicineCabinetViewModel
             )
         }
     ) {innerPadding ->
@@ -95,13 +95,13 @@ fun MedicineCabinetScreen(
                         .padding(top = 96.dp, start = 16.dp, end = 16.dp, bottom = 72.dp)
                 ) {
                     MedicationList(
-                        activeMedicine = medicineCabinetState.dummyMedicine,
                         onActiveMedicineChange = { newActiveMedicine ->
-//                            activeMedicine = newActiveMedicine
+                            medicineCabinetViewModel.setActiveMedicine(
+                                newActiveMedicine ?: medicineCabinetState.dummyMedicine)
                         },
                         isCabinet = true,
                         medications = medicineCabinetState.medicine,
-                        navController
+                        medicineCabinetViewModel
                     )
                 }
             }
@@ -111,9 +111,10 @@ fun MedicineCabinetScreen(
 
 @Composable
 fun MedicineCabinetFloatingActionButton(
-    activeMedicine: Medicine,
-    navController:NavController
+    navController:NavController,
+    viewModel: MedicineCabinetViewModel
 ) {
+    var activeExists = viewModel.state.activeMedicine.id != 999
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,15 +125,19 @@ fun MedicineCabinetFloatingActionButton(
         ExtendedFloatingActionButton(
             containerColor = colorScheme.primary,
             contentColor = colorScheme.onPrimary,
-            text = { Text(text = if (activeMedicine.id === 999) "Add Medicine" else "View Medicine") },
+            text = { Text(text = if (!activeExists) "Add Medicine" else "View Medicine") },
             icon = {
                 Icon(
-                    if (activeMedicine.id === 999) Icons.Filled.Add else Icons.Outlined.StickyNote2,
+                    if (!activeExists) Icons.Filled.Add else Icons.Outlined.StickyNote2,
                     null
                 )
             },
             onClick = {
-                navController.navigate("AddEditMedicine/-1")
+                if(activeExists){
+                    navController.navigate("MedicineDetails/${viewModel.state.activeMedicine.id}")
+                } else {
+                    navController.navigate("AddEditMedicine/-1")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

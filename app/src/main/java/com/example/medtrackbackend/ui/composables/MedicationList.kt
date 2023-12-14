@@ -14,15 +14,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.medtrackbackend.data.Medicine
+import com.example.medtrackbackend.ui.screens.medicine_cabinet.MedicineCabinetViewModel
 
 @Composable
 fun MedicationList(
-    activeMedicine: Medicine,
-    onActiveMedicineChange: (Medicine) -> Unit,
+    onActiveMedicineChange: (Medicine?) -> Unit,
     isCabinet: Boolean = false,
     medications: List<Medicine>,
-    navController: NavController
+    viewModel: MedicineCabinetViewModel
 ) {
+    var activeMedicine = viewModel.state.activeMedicine
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(if (isCabinet) 0.dp else 16.dp)
     ) {
@@ -44,7 +45,6 @@ fun MedicationList(
                 activeMedicine = activeMedicine,
                 onActiveMedicineChange = onActiveMedicineChange,
                 isCabinet = isCabinet,
-                navController
             )
         }
         item {
@@ -54,7 +54,6 @@ fun MedicationList(
                 activeMedicine = activeMedicine,
                 onActiveMedicineChange = onActiveMedicineChange,
                 isCabinet = isCabinet,
-                navController
             )
         }
     }
@@ -65,9 +64,8 @@ private fun DisplayMedications(
     title: String?,
     medications: List<Medicine>,
     activeMedicine: Medicine,
-    onActiveMedicineChange: (Medicine) -> Unit,
+    onActiveMedicineChange: (Medicine?) -> Unit,
     isCabinet: Boolean,
-    navController: NavController
 ) {
     if (title != null) {
         Text(
@@ -78,24 +76,17 @@ private fun DisplayMedications(
         )
     }
     medications.forEach { medication ->
-        val isActiveMedicine = medication.id == activeMedicine?.id
+        val isActiveMedicine = medication.id == activeMedicine.id
         val activeMedicineChange = if (isActiveMedicine) null else medication
         MedicationItem(
             medication = medication,
-            isActive = medication.id == activeMedicine?.id,
+            isActive = medication.id == activeMedicine.id,
             isComplete = !medication.isActive,
             isCabinet = isCabinet,
-            onClick = {
-                if (isCabinet) {
-                    navController.navigate("MedicineDetails/${medication.id}")
-                } else {
-                    //TODO ADD LOGIC FOR TAKING MEDICINE
-                }
-            },
-            navController = navController,
-        )
+        ){
+                onActiveMedicineChange(activeMedicineChange)
+        }
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
-//            onActiveMedicineChange(activeMedicineChange)

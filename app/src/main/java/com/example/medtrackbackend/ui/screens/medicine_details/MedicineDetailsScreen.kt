@@ -1,6 +1,7 @@
 package com.example.medtrackbackend.ui.screens.medicine_details
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,9 @@ fun MedicineDetailsScreen(
     medicineDetailsViewModel.getIntakeProgramsForMedicine(medicineDetailsState.medicine)
     val medicine = medicineDetailsState.medicine
 
+    //retrieves the active program selected on screen
+
+
     Scaffold(
         bottomBar = {
             BottomNavBar(navController)
@@ -96,11 +100,12 @@ fun MedicineDetailsScreen(
                     // Check if medicineDetailsState.medicinePrograms is not null and not empty before using it
                     if (medicineDetailsState.medicinePrograms.isNotEmpty()) {
                         ProgramList(
-                            medicineDetailsState.medicinePrograms.first(),
                             onActiveProgramChange = { newActiveProgram ->
-                                // Handle active program change
+                                medicineDetailsViewModel.setActiveProgram(newActiveProgram ?:
+                                medicineDetailsState.dummyProgram)
                             },
-                            medicineDetailsState.medicinePrograms
+                            medicineDetailsState.medicinePrograms,
+                            medicineDetailsViewModel
                         )
                     } else {
                         // You can display a loading state or a message when programs are empty
@@ -118,7 +123,7 @@ fun MedicineDetailsFloatingActionButton(
     navController: NavController,
     viewModel: MedicineDetailsViewModel
 ) {
-    var activeExists = activeProgram.id != 999
+    var activeExists =  viewModel.state.activeProgram.id != 999
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),

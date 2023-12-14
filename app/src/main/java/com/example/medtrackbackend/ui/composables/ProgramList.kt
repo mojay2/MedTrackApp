@@ -1,5 +1,6 @@
 package com.example.medtrackbackend.ui.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -11,14 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.medtrackbackend.data.IntakeProgram
+import com.example.medtrackbackend.ui.screens.medicine_details.MedicineDetailsViewModel
 
 @Composable
 fun ProgramList(
-    activeProgram: IntakeProgram,
     onActiveProgramChange: (IntakeProgram?) -> Unit,
-    programs: List<IntakeProgram>
+    programs: List<IntakeProgram>,
+    viewModel: MedicineDetailsViewModel
 ) {
-
+    var activeProgram = viewModel.state.activeProgram
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -45,7 +47,7 @@ fun ProgramList(
 private fun ProgramListSection(
     title: String,
     programs: List<IntakeProgram>,
-    activeProgram: IntakeProgram?,
+    activeProgram: IntakeProgram,
     onActiveProgramChange: (IntakeProgram?) -> Unit,
 ) {
     Text(
@@ -55,7 +57,7 @@ private fun ProgramListSection(
         modifier = Modifier.padding(bottom = 8.dp)
     )
     programs.forEach { program ->
-        val isActiveProgram = program.id == activeProgram?.id
+        val isActiveProgram = program.id == activeProgram.id
         val activeProgramChange = if (isActiveProgram) null else program
 
         ProgramItem(

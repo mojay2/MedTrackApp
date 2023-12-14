@@ -31,7 +31,7 @@ class AddEditMedicineViewModel(
         viewModelScope.launch {
             repository.allMedicine.collectLatest {
                 state = state.copy(
-                    medicine = it
+                    medicine = it ?: emptyList()
                 )
             }
         }
@@ -47,7 +47,7 @@ class AddEditMedicineViewModel(
         }
     }
 
-    fun insertMedicine(medicineName: String, qty: Int, dosage:Double){
+    private fun insertMedicine(medicineName: String, qty: Int, dosage:Double){
         viewModelScope.launch {
             repository.insertMedicine(
                 Medicine(
@@ -60,7 +60,7 @@ class AddEditMedicineViewModel(
         }
     }
 
-    fun updateMedicine(id: Int, medicineName: String, qty: Int, dosage:Double){
+    private fun updateMedicine(id: Int, medicineName: String, qty: Int, dosage:Double){
         viewModelScope.launch {
             repository.updateMedicine(
                 Medicine(
@@ -74,67 +74,84 @@ class AddEditMedicineViewModel(
         }
     }
 
-
-
-    fun insertProgram(medicineId: Int,
-                      programName:String,
-                      startDate:Date,
-                      weeks: Int,
-                      numPills: Int,
-                      interval: Int,
-                      time: String){
-        viewModelScope.launch {
-            Log.d("Test Tag", time)
-            repository.insertProgram(
-                IntakeProgram(
-                    medIdFk = medicineId,
-                    programName=programName,
-                    startDate =startDate,
-                    weeks= weeks,
-                    numPills= numPills,
-                )
-            )
-        }
-    }
-
-    private fun getIntakeTimesToday(){
-        val currentDate = Calendar.getInstance().time
-        viewModelScope.launch {
-            repository.getAllTimesFromDate(currentDate).collectLatest {
-                state = state.copy(
-                    intakeTimes = it
-                )
-            }
-        }
-    }
-
-    private fun getIntakeTimesFromDate(date: Date){
-        viewModelScope.launch {
-            repository.getAllTimesFromDate(date).collectLatest {
-                state = state.copy(
-                    intakeTimes = it
-                )
-            }
-        }
-    }
-
-    private fun intakeProgramsForMedicine(medicine: Medicine){
-        viewModelScope.launch {
-            repository.getProgramsFromMedicine(medicine.id).collectLatest {
-                state = state.copy(
-                    medicinePrograms = it
-                )
-            }
-        }
-    }
-
     fun getMedicine(medicineId: Int) {
         viewModelScope.launch {
             repository.getMedicineById(medicineId).collectLatest {
                 state = state.copy(
-                    selectedMedicine = it
+                    selectedMedicine = it?: Medicine(999,"",999, 999.9, false),
                 )
             }
+        }
+    }
+
+     fun deleteMedicine(medicineId: Int){
+        viewModelScope.launch{
+            try{
+                repository.deleteMedicineFromId(medicineId)
+                Log.e("AddEditMedicineVM", "Deleted Medicine Successfully")
+            } catch(e: Exception) {
+                Log.e("AddEditMedicineVM", "Delete Medicine failed: ${e.message}", e)
+            }
+        }
+    }
+
+    fun onNameChange(newValue: String){
+        Log.d("AddEditMedVM", "onName called with $newValue")
+        state = state.copy(
+            editedName = newValue
+        )
+    }
+
+    fun onQtyChange(newValue:String){
+        Log.d("AddEditMedVM", "onQtyChange called with $newValue")
+        try {
+            state = state.copy(editedQty = newValue)
+        } catch (e: NumberFormatException) {
+            Log.e("AddEditMedVM", "Error Updating Quantity: ${e.message}", e)
+        }
+    }
+
+    fun onDosageChange(newValue:String){
+        Log.d("AddEditMedVM", "onWeekChange called with $newValue")
+        try {
+            state = state.copy(editedDosage = newValue)
+        } catch (e: NumberFormatException) {
+            Log.e("AddEditMedVM", "Error Updating Dosage: ${e.message}", e)
+        }
+    }
+
+    fun validateInputs():Boolean {
+        val qtyAsInt = state.editedQty.toIntOrNull()
+        val dosageAsInt = state.editedDosage.toIntOrNull()
+
+        if(state.editedName == "" || state.editedQty == "" || state.editedDosage == "" ||
+            qtyAsInt == null || dosageAsInt == null){
+            return false
+        }
+        return true
+    }
+
+    fun insertStateInputs():Boolean {
+        return try {
+            if(state.selectedMedicine.id === 999){
+                insertMedicine(
+                    state.editedName,
+                    state.editedQty.toInt(),
+                    state.editedDosage.toDouble()
+                )
+            } else {
+                updateMedicine(
+                    state.selectedMedicine.id,
+                    state.editedName,
+                    state.editedQty.toInt(),
+                    state.editedDosage.toDouble()
+                )
+            }
+
+            true
+        } catch(e: Exception){
+            Log.d("AddEditMedVM", "Error Calling Insert Function")
+            false
         }
     }
 
@@ -148,4 +165,7 @@ data class AddEditMedicineState(
     val programs: List<IntakeProgram> = emptyList(),
     val selectedMedicine : Medicine = Medicine(999, "", 999,
         999.9, false),
+    val editedName: String = "",
+    val editedQty: String = "",
+    val editedDosage: String = ""
 )

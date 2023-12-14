@@ -1,6 +1,5 @@
-package com.example.medtrackbackend.ui.screens.add_edit_medicine
+package com.example.medtrackbackend.ui.screens.medicine_details
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.medtrackbackend.ui.repository.Repository
 import androidx.compose.runtime.getValue
@@ -11,11 +10,8 @@ import com.example.medtrackbackend.Graph
 import com.example.medtrackbackend.data.IntakeProgram
 import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
-import com.example.medtrackbackend.ui.composables.toDate
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.util.Calendar
 import java.util.Date
 
 class MedicineDetailsViewModel(
@@ -30,7 +26,7 @@ class MedicineDetailsViewModel(
         viewModelScope.launch {
             repository.getMedicineById(medicineId).collectLatest {
                 state = state.copy(
-                    medicine = it
+                    medicine = it ?: Medicine(999,"",999, 999.9, false),
                 )
             }
         }

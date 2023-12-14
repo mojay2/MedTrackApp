@@ -70,7 +70,6 @@ fun AddEditMedicineScreen(
     val submitButtonText = if (medicine.id != 999) "Confirm Changes" else "Confirm Details"
     val pageHeader =
         if (medicine.id != 999) PageHeaderData.EDIT_MEDICINE_DETAILS else PageHeaderData.ADD_MEDICINE_DETAILS
-    var medicineFormData = AddEditMedicineFormData("", 999, 999.9, false)
 
     Scaffold(
         bottomBar = {
@@ -80,7 +79,6 @@ fun AddEditMedicineScreen(
             AddEditMedicineFloatingActionButton(
                 submitButtonText,
                 addEditMedicineViewModel,
-                medicineFormData,
                 medicine,
                 navController,
                 )
@@ -115,24 +113,21 @@ fun AddEditMedicineScreen(
                         showSubHeader = medicine.id != 999,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                     medicineFormData = AddEditMedicineForm(
-                        medicine = medicine
+                    AddEditMedicineForm(
+                        medicine = medicine,
+                        addEditMedicineViewModel
                     )
                 }
-                AddEditMedicineFloatingActionButton(
-                    submitButtonText,
-                    addEditMedicineViewModel,
-                    medicineFormData,
-                    medicine,
-                    navController
-                    )
             }
 
 
             if (openDeleteDialog.value && medicine.id != 999) {
                 ConfirmModal(
                     onDismissRequest = { openDeleteDialog.value = false },
-                    onConfirmation = { openDeleteDialog.value = false },
+                    onConfirmation = {
+                        addEditMedicineViewModel.deleteMedicine(medicineId)
+                        navController.navigate("medicinecabinet")
+                    },
                     dialogTitle = "Are you sure you want to delete this medicine?",
                     dialogContent = {
                         Text(
@@ -147,18 +142,6 @@ fun AddEditMedicineScreen(
                     icon = Icons.Filled.Check
                 )
             }
-
-//TODO: backend logic, delete after integration is finalized
-
-//            CreateMedicineCard(
-//                onAddMedicine = { medicineName, qty, dosage ->
-//                    addEditMedicineViewModel.insertMedicine(medicineName, qty, dosage)
-//                },
-//                onEditMedicine = { medicine, medicineName, qty, dosage ->
-//                    addEditMedicineViewModel.updateMedicine(medicineId, medicineName, qty, dosage)
-//                },
-//                medicine
-//            )
         }
     }
 }
@@ -167,7 +150,6 @@ fun AddEditMedicineScreen(
 fun AddEditMedicineFloatingActionButton(
     submitButtonText: String,
     viewModel: AddEditMedicineViewModel,
-    medicineFormData: AddEditMedicineFormData,
     medicine: Medicine,
     navController: NavController
 ) {
@@ -184,31 +166,11 @@ fun AddEditMedicineFloatingActionButton(
             text = { Text(text = submitButtonText) },
             icon = { Icon(Icons.Outlined.Check, "Check Icon") },
             onClick = {
-                val editedMedicineName = medicineFormData.medicineName
-                val editedDosage = medicineFormData.dosage
-                val editedQuantity = medicineFormData.quantity
-                if (editedMedicineName.isNotBlank() && editedDosage >= 0 && editedQuantity >= 0) {
-                    if(medicine.id != 999){
-                        viewModel.updateMedicine(
-                            medicine.id,
-                            medicineFormData.medicineName,
-                            medicineFormData.quantity,
-                            medicineFormData.dosage
-                        )
-                        navController.navigate("medicinecabinet")
-                    }
-                    else{
-                        viewModel.insertMedicine(
-                            medicineFormData.medicineName,
-                            medicineFormData.quantity,
-                            medicineFormData.dosage
-                        )
-                        navController.navigate("medicinecabinet")
-                    }
-                }else{
-                    Toast.makeText(null, "Test", Toast.LENGTH_LONG).show()
+                if (viewModel.validateInputs() && viewModel.insertStateInputs()) {
+                    navController.navigate("medicinecabinet")
+                } else {
+                    // Todo: Add prompt for invalid inputs
                 }
-
             },
             modifier = Modifier
                 .fillMaxWidth()

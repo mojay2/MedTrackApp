@@ -18,13 +18,6 @@ class Repository(
 ) {
     val allMedicine: Flow<List<Medicine>> = medicineDao.getAllMedicine()
     val allPrograms: Flow<List<IntakeProgram>> = intakeProgramDao.getAllPrograms()
-    val allTimes: Flow<List<IntakeTime>> = intakeTimeDao.getAllTimes()
-
-    val latestProgram: Flow<IntakeProgram> = intakeProgramDao.getLatestProgram()
-
-//    suspend fun getAllTimes():Flow<List<IntakeTime>>{
-//        return intakeTimeDao.getAllTimes()
-//    }
 
     suspend fun insertMedicine(medicine: Medicine) {
         medicineDao.insert(medicine)
@@ -50,6 +43,9 @@ class Repository(
         intakeProgramDao.update(program)
     }
 
+    suspend fun deleteMedicineFromId(medicineId: Int){
+        medicineDao.deleteMedicineFromId(medicineId)
+    }
     suspend fun deleteProgramFromId(programId: Int){
         intakeProgramDao.deleteProgramFromId(programId)
     }
@@ -66,24 +62,8 @@ class Repository(
         return intakeProgramDao.getProgram(programId)
     }
 
-//    fun getLatestProgram():Flow<IntakeProgram>{
-//        return intakeProgramDao.getLatestProgram()
-//    }
-
-    fun getTimeById(timeId: Int): Flow<IntakeTime> {
-        return intakeTimeDao.getTimeById(timeId)
-    }
-
     fun getProgramsFromMedicine(medicineId: Int): Flow<List<IntakeProgram>>{
         return intakeProgramDao.getProgramsForMedicine(medicineId)
-    }
-
-    fun getAllTimesForProgram(programId: Int): Flow<List<IntakeTime>> {
-        return intakeTimeDao.getAllTimesForProgram(programId)
-    }
-
-    fun getAllTimesForProgramWithMedicine(programId: Long): Flow<List<IntakeTimesWithProgramAndMedicine>> {
-        return intakeTimeDao.getAllTimesForProgramWithMedicine(programId)
     }
 
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>> {

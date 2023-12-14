@@ -31,6 +31,9 @@ interface MedicineDao {
     @Query("SELECT * FROM medicine")
     fun getAllMedicine(): Flow<List<Medicine>>
 
+    @Query("UPDATE medicine SET isActive = :isActive WHERE medicine_id = :medicineId")
+    suspend fun updateMedicineStatus(medicineId: Int, isActive: Boolean)
+
 }
 
 @Dao
@@ -103,7 +106,7 @@ interface TimeDao {
         FROM intake_time
         INNER JOIN intake_program ON Intake_Time.programIdFk = program_id
         INNER JOIN medicine ON medIdFk = medicine_id
-        WHERE intake_time.intakeDate = :date 
+        WHERE intake_time.intakeDate = :date AND medicine.isActive = 1
         ORDER BY time ASC
 """)
     fun getAllTimesFromDate(date: Date): Flow<List<IntakeTimesWithProgramAndMedicine>>

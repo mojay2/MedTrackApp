@@ -9,6 +9,7 @@ import com.example.medtrackbackend.data.ProgramDao
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.data.TimeDao
 import kotlinx.coroutines.flow.Flow
+import java.lang.IllegalStateException
 import java.util.Date
 
 class Repository(
@@ -31,6 +32,9 @@ class Repository(
         intakeTimeDao.insert(time)
     }
 
+    suspend fun updateMedicineStatus(medicineId: Int, isActive: Boolean){
+        medicineDao.updateMedicineStatus(medicineId, isActive)
+    }
     suspend fun updateIntakeTimeStatus(time: IntakeTime) {
         intakeTimeDao.updateIntakeTimeStatus(time)
     }

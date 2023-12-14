@@ -111,11 +111,6 @@ fun AddEditProgramForm(
                 },
                 readOnly = true
             )
-            Button(onClick = {
-                Log.d("Program Form", viewModel.state.editedDate.toString())
-            }) {
-
-            }
         }
     }
 

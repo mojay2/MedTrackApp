@@ -61,6 +61,13 @@ class HomeViewModel(
         }
     }
 
+    fun validateInventory(items: IntakeTimesWithProgramAndMedicine):Boolean{
+        return (items.medicine.quantity - items.intakeProgram.numPills >= 0)
+    }
+
+    fun isLowInStock(items: IntakeTimesWithProgramAndMedicine):Boolean{
+        return items.medicine.quantity <= 10
+    }
     fun tookMedicine(items: IntakeTimesWithProgramAndMedicine){
         viewModelScope.launch {
             repository.updateIntakeTimeStatus(

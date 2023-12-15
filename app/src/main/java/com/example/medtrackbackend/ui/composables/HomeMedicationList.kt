@@ -1,5 +1,6 @@
 package com.example.medtrackbackend.ui.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +66,8 @@ private fun HomeDisplayMedications(
     navController: NavController,
     viewModel: HomeViewModel
 ) {
+    val context = LocalContext.current
+
     if (title != null) {
         Text(
             text = title,
@@ -96,7 +100,13 @@ private fun HomeDisplayMedications(
                 ConfirmModal(
                     onDismissRequest = { openConfirmDialog.value = false },
                     onConfirmation = {
-                        viewModel.tookMedicine(medication)
+                        if(viewModel.validateInventory(medication)){
+                            viewModel.tookMedicine(medication)
+                            Toast.makeText(context, "Medicine Intake Success", Toast.LENGTH_SHORT).show()
+                            openConfirmDialog.value = false
+                        }else {
+                            Toast.makeText(context, "Cannot Take Medicine. Inventory Too Low", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     dialogTitle = "Confirm Dosage",
                     dialogContent = {
@@ -116,6 +126,8 @@ private fun HomeDisplayMedications(
                 isComplete = medication.intakeTime.status == Status.TAKEN,
                 navController = navController,
                 onClick = {
+                    if(viewModel.isLowInStock(medication))
+                        Toast.makeText(context, "This Medicine will run out soon.", Toast.LENGTH_SHORT).show()
                     openConfirmDialog.value = true
                 }
             )

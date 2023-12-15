@@ -60,7 +60,7 @@ fun AddEditMedicineScreen(
     val pageHeader =
         if (medicine.id != 999) PageHeaderData.EDIT_MEDICINE_DETAILS
         else PageHeaderData.ADD_MEDICINE_DETAILS
-
+    val context = LocalContext.current
     Scaffold(
         bottomBar = {
             BottomNavBar(navController)
@@ -117,6 +117,7 @@ fun AddEditMedicineScreen(
                     onConfirmation = {
                         addEditMedicineViewModel.deleteMedicine(medicineId)
                         navController.navigate("medicinecabinet")
+                        Toast.makeText(context, "Medicine Deleted", Toast.LENGTH_SHORT).show()
                     },
                     dialogTitle = "Are you sure you want to delete this medicine?",
                     dialogContent = {

@@ -29,23 +29,31 @@ import java.util.Date
 class AddEditProgramViewModel
     constructor(
     private val repository: Repository = Graph.repository,
-    private val programId:Int
+    private var programId:Int
     ) : ViewModel() {
     var state by mutableStateOf(AddEditProgramState())
         private set
     init {
         if(programId != -1){
-            viewModelScope.launch {
-                repository
-                    .getProgramById(programId)
-                    .collectLatest {
-                        state = state.copy(
-                            editedProgramName = it.programName,
-                            editedWeeks = it.weeks.toString(),
-                            editedDate = it.startDate,
-                            editedNumPills = it.numPills.toString(),
-                        )
-                    }
+            try{
+                viewModelScope.launch {
+                    repository
+                        .getProgramById(programId)
+                        .collectLatest {
+                            if(it != null){
+                                state = state.copy(
+                                    editedProgramName = it.programName,
+                                    editedWeeks = it.weeks.toString(),
+                                    editedDate = it.startDate,
+                                    editedNumPills = it.numPills.toString(),
+                                )
+                            } else {
+                                programId = -1
+                            }
+                        }
+                }
+            } catch (e: Exception){
+                programId = -1
             }
         }
     }
@@ -133,7 +141,6 @@ class AddEditProgramViewModel
             try{
                 repository.deleteProgramFromId(programId)
                 Log.e("AddEditProgramVM", "Deleted Program Successfully")
-
                 getIntakeProgramsForMedicine(state.medicine)
                 if(state.programList.isEmpty()){
                     updateMedicineActiveStatus(state.medicine.id, isActive = false)

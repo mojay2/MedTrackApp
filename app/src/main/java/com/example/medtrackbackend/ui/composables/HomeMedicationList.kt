@@ -79,7 +79,7 @@ private fun HomeDisplayMedications(
     if(medications.isEmpty()){
         if(title === "To Take")
             Text(
-                text = "You have taken all your medication for today.",
+                text = "No Medicine to Take Today.",
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center,

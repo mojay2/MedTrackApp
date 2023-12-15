@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class AddEditMedicineViewModel
     constructor(
     private val repository: Repository = Graph.repository,
-    private val medicineId:Int,
+    private var medicineId:Int,
     ): ViewModel(){
     var state by mutableStateOf(AddEditMedicineState())
         private set
@@ -31,11 +31,15 @@ class AddEditMedicineViewModel
                 repository
                     .getMedicineById(medicineId)
                     .collectLatest {
-                        state = state.copy(
-                            editedName = it.medicineName,
-                            editedQty = it.quantity.toString(),
-                            editedDosage = it.dosage.toInt().toString()
-                        )
+                        if(it != null){
+                            state = state.copy(
+                                editedName = it.medicineName,
+                                editedQty = it.quantity.toString(),
+                                editedDosage = it.dosage.toInt().toString()
+                            )
+                        } else {
+                            medicineId = -1
+                        }
                     }
             }
         }

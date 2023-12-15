@@ -101,9 +101,13 @@ private fun HomeDisplayMedications(
                     onDismissRequest = { openConfirmDialog.value = false },
                     onConfirmation = {
                         if(viewModel.validateInventory(medication)){
-                            viewModel.tookMedicine(medication)
-                            Toast.makeText(context, "Medicine Intake Success", Toast.LENGTH_SHORT).show()
-                            openConfirmDialog.value = false
+                            if(viewModel.isFutureDate(medication)){
+                                Toast.makeText(context, "Cannot Take Medicine from a future date", Toast.LENGTH_SHORT).show()
+                            }else{
+                                viewModel.tookMedicine(medication)
+                                Toast.makeText(context, "Medicine Intake Success", Toast.LENGTH_SHORT).show()
+                                openConfirmDialog.value = false
+                            }
                         }else {
                             Toast.makeText(context, "Cannot Take Medicine. Inventory Too Low", Toast.LENGTH_SHORT).show()
                         }

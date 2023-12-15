@@ -24,6 +24,7 @@ import com.example.medtrackbackend.data.DateUtil
 import com.example.medtrackbackend.data.IntakeTime
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.data.TimeDao
+import com.example.medtrackbackend.ui.composables.toDate
 import kotlinx.coroutines.isActive
 import java.time.LocalTime
 
@@ -68,6 +69,11 @@ class HomeViewModel(
     fun isLowInStock(items: IntakeTimesWithProgramAndMedicine):Boolean{
         return items.medicine.quantity <= 10
     }
+
+    fun isFutureDate(items: IntakeTimesWithProgramAndMedicine):Boolean{
+        return items.intakeTime.intakeDate.after(DateUtil().resetTimeToMidnight(LocalDate.now().toDate()))
+    }
+
     fun tookMedicine(items: IntakeTimesWithProgramAndMedicine){
         viewModelScope.launch {
             repository.updateIntakeTimeStatus(

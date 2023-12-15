@@ -30,6 +30,7 @@ import com.example.medtrackbackend.data.IntakeTimesWithProgramAndMedicine
 import com.example.medtrackbackend.data.Medicine
 import com.example.medtrackbackend.data.Status
 import com.example.medtrackbackend.ui.screens.home.HomeViewModel
+import java.time.LocalDate
 
 @Composable
 fun HomeMedicationList(
@@ -149,19 +150,20 @@ fun HomeMedicationItem(
     onClick: () -> Unit,
     navController: NavController
 ) {
-
-
+    val missedMedicine = medication.intakeTime.intakeDate.before(LocalDate.now().toDate())
     val containerColor = when {
         isComplete && !isCabinet -> MaterialTheme.colorScheme.surfaceColorAtElevation(
             elevation = 5.dp
         )
-
+        !isComplete && missedMedicine -> MaterialTheme.colorScheme.errorContainer
         isActive -> MaterialTheme.colorScheme.secondaryContainer
         else -> MaterialTheme.colorScheme.surface
     }
 
     val capsuleColor = if (isComplete && !isCabinet) {
         MaterialTheme.colorScheme.secondary
+    } else if(!isComplete && missedMedicine) {
+        MaterialTheme.colorScheme.error
     } else {
         MaterialTheme.colorScheme.primary
     }
